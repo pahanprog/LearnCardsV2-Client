@@ -1,0 +1,18 @@
+query DeckSearch($title: String!) {
+  deckSearch(title: $title) {
+    id
+    creator {
+      username
+    }
+    title
+    description
+    cards {
+      number
+      question
+      answer
+    }
+    learners {
+      username
+    }
+  }
+}

@@ -1,0 +1,7 @@
+mutation UpdateCard($id: Float!, $question: String!, $answer: String!) {
+  updateCard(input: { id: $id, question: $question, answer: $answer }) {
+    id
+    question
+    answer
+  }
+}

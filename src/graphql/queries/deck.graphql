@@ -1,0 +1,18 @@
+query Deck($id: Float!) {
+  deck(deckId: $id) {
+    creator {
+      username
+    }
+    title
+    description
+    learners {
+      username
+    }
+    cards {
+      id
+      number
+      question
+      answer
+    }
+  }
+}

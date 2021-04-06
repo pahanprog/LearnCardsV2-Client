@@ -1,0 +1,7 @@
+query DecksPreview {
+  decks {
+    id
+    title
+    description
+  }
+}

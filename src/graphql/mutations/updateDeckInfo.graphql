@@ -1,0 +1,6 @@
+mutation UpdateDeckInfo($title: String!, $description: String!, $id: Float!) {
+  updateDeckInfo(id: $id, input: { title: $title, description: $description }) {
+    title
+    description
+  }
+}

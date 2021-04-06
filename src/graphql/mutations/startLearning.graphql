@@ -1,0 +1,10 @@
+mutation StartLearning($id: Float!) {
+  startLearning(id: $id) {
+    id
+    creatorId
+    learners {
+      id
+      username
+    }
+  }
+}

@@ -1,0 +1,17 @@
+mutation UpdateDeckCards(
+  $id: Float!
+  $del: [CardInputWithId!]
+  $update: [CardInputWithId!]!
+) {
+  updateDeckCards(deckId: $id, update: $update, del: $del) {
+    id
+    title
+    description
+    cards {
+      id
+      number
+      question
+      answer
+    }
+  }
+}
