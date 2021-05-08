@@ -2,9 +2,10 @@ import { createClient } from "@urql/core";
 import type { AppProps } from "next/app";
 import { Provider } from "urql";
 import "../assets/css/tailwind.output.css";
+import { __prod__ } from "../constants";
 
 const client = createClient({
-  url: "http://localhost:4000/graphql",
+  url: __prod__ ? process.env.API_URL! : "http://localhost:4000/graphql",
   fetchOptions: {
     credentials: "include",
   },
