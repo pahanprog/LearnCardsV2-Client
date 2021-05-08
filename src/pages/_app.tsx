@@ -4,14 +4,21 @@ import { Provider } from "urql";
 import "../assets/css/tailwind.output.css";
 import { __prod__ } from "../constants";
 
-const client = createClient({
-  url: __prod__ ? process.env.API_URL! : "http://localhost:4000/graphql",
-  fetchOptions: {
-    credentials: "include",
-  },
-});
+let client: any;
+
+try {
+  client = createClient({
+    url: process.env.API_URL!,
+    fetchOptions: {
+      credentials: "include",
+    },
+  });
+} catch (e) {
+  console.error(e);
+}
 
 export default function App({ Component, pageProps }: AppProps) {
+  console.log(process.env.API_URL);
   return (
     <Provider value={client}>
       <Component {...pageProps} />
