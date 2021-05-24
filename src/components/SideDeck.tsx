@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import DeleteDeckButton from "./DeleteDeckButton";
 
 interface SideDeckProps {
@@ -6,6 +6,7 @@ interface SideDeckProps {
   description: string;
   id: number;
   changeDeck: Function;
+  selected?: boolean;
 }
 
 export const SideDeck: React.FC<SideDeckProps> = ({
@@ -13,6 +14,7 @@ export const SideDeck: React.FC<SideDeckProps> = ({
   id,
   title,
   changeDeck,
+  selected,
 }) => {
   const handleClick = () => {
     changeDeck(id);
@@ -20,12 +22,15 @@ export const SideDeck: React.FC<SideDeckProps> = ({
 
   return (
     <div
-      className="mb-4 p-2 last:mb-0 cursor-pointer relative group"
       onClick={handleClick}
+      className={`mx-1 my-2 mb-4 relative group ${
+        selected ? "mr-4 border-l-8 border-purple-300" : null
+      }`}
     >
-      <DeleteDeckButton id={id} title={title} />
-      <div className="truncate ">{title}</div>
-      <div className="truncate ">{description}</div>
+      <div className="px-4 last:mb-0 cursor-pointer">
+        <div className="truncate ">{title}</div>
+        <div className="truncate ">{description}</div>
+      </div>
     </div>
   );
 };

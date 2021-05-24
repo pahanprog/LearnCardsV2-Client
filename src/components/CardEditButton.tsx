@@ -1,6 +1,8 @@
 import { faPen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useEffect, useState } from "react";
+import { Transition, Dialog } from "@headlessui/react";
+import { title } from "node:process";
+import React, { Fragment, useEffect, useState } from "react";
 import { useUpdateCardMutation } from "../generated/graphql";
 import Modal from "./Modal";
 
@@ -17,7 +19,7 @@ const CardEditButton: React.FC<CardEditButtonProps> = ({
 }) => {
   const [{ error }, update] = useUpdateCardMutation();
 
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const [questionValue, setQuestionValue] = useState(String);
   const [answerValue, setAnswerValue] = useState(String);
@@ -28,11 +30,11 @@ const CardEditButton: React.FC<CardEditButtonProps> = ({
   }, [question, answer]);
 
   const openModal = () => {
-    setOpen(true);
+    setIsOpen(true);
   };
 
   const closeModal = () => {
-    setOpen(false);
+    setIsOpen(false);
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -58,48 +60,93 @@ const CardEditButton: React.FC<CardEditButtonProps> = ({
         className="mb-4 cursor-pointer"
         onClick={openModal}
       />
-      <Modal title="Edit Card" close={closeModal} show={open}>
-        <form
-          className="w-full flex-1 flex flex-col"
-          onSubmit={(e) => handleSubmit(e)}
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog
+          as="div"
+          className="fixed inset-0 z-10 overflow-y-auto"
+          onClose={closeModal}
         >
-          <div className="flex flex-1">
-            <div className="flex-1 mr-2 flex flex-col">
-              <label>Question</label>
-              <textarea
-                value={questionValue}
-                onChange={(e) => setQuestionValue(e.target.value)}
-                className="w-full h-full border-2 border-gray-300 p-2 rounded-md focus:outline-none"
-              />
-            </div>
+          <div className="min-h-screen px-4 text-center">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <Dialog.Overlay className="fixed inset-0 bg-gray-400 bg-opacity-30" />
+            </Transition.Child>
+            <span
+              className="inline-block h-screen align-middle"
+              aria-hidden="true"
+            >
+              &#8203;
+            </span>
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <div className="inline-block w-full max-w-md p-6 overflow-hidden text-left align-middle transition-all transform bg-white border border-gray-100 shadow-xl rounded-xl">
+                <Dialog.Title
+                  as="h3"
+                  className="text-xl text-center font-medium leading-6 text-gray-900"
+                >
+                  Edit card
+                </Dialog.Title>
+                <div className="mt-4">
+                  <form
+                    className="w-full flex-1 flex flex-col"
+                    onSubmit={(e) => handleSubmit(e)}
+                  >
+                    <div className="flex flex-1">
+                      <div className="flex-1 mr-2 flex flex-col">
+                        <label>Question</label>
+                        <textarea
+                          value={questionValue}
+                          onChange={(e) => setQuestionValue(e.target.value)}
+                          className="w-full h-full border-2 border-gray-300 p-2 rounded-md focus:outline-none"
+                        />
+                      </div>
 
-            <div className="flex-1  ml-2 flex flex-col">
-              <label>Answer</label>
-              <textarea
-                value={answerValue}
-                onChange={(e) => setAnswerValue(e.target.value)}
-                className="w-full h-full border-2 border-gray-300 p-2 rounded-md rounded-md focus:outline-none"
-              />
-            </div>
-          </div>
+                      <div className="flex-1  ml-2 flex flex-col">
+                        <label>Answer</label>
+                        <textarea
+                          value={answerValue}
+                          onChange={(e) => setAnswerValue(e.target.value)}
+                          className="w-full h-full border-2 border-gray-300 p-2 rounded-md rounded-md focus:outline-none"
+                        />
+                      </div>
+                    </div>
 
-          <div className="w-full flex mt-6">
-            <div className="flex-1 flex justify-end mr-2">
-              <span className="underline cursor-pointer" onClick={closeModal}>
-                Cancel
-              </span>
-            </div>
-            <div className="flex-1 flex justify-start ml-2">
-              <button
-                type="submit"
-                className="bg-purple-700 px-4 py-1 text-white rounded font-semibold"
-              >
-                Submit
-              </button>
-            </div>
+                    <div className="w-full flex justify-around mt-6">
+                      <button
+                        type="button"
+                        className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-200 rounded-md hover:bg-blue-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+                        onClick={closeModal}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="inline-flex justify-center px-4 py-2 text-sm font-medium text-purple-700 bg-purple-200 rounded-md hover:bg-purple-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+                      >
+                        Submit
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </Transition.Child>
           </div>
-        </form>
-      </Modal>
+        </Dialog>
+      </Transition>
     </>
   );
 };

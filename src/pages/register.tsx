@@ -1,12 +1,12 @@
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Switch } from "@headlessui/react";
 import Link from "next/link";
 import React from "react";
 import { useState } from "react";
-import { useLoginMutation } from "../generated/graphql";
+import { Switch } from "@headlessui/react";
+import { useRegisterMutation } from "../generated/graphql";
 
-export default function login() {
+export default function register() {
   const [username, setUsername] = useState(String);
   const [password, setPassword] = useState(String);
   const [remember, setRemember] = useState(false);
@@ -14,7 +14,7 @@ export default function login() {
   const [usernameError, setUsernameError] = useState(String);
   const [passwordError, setPasswordError] = useState(String);
 
-  const [{}, login] = useLoginMutation();
+  const [{}, register] = useRegisterMutation();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -24,14 +24,14 @@ export default function login() {
       password,
     };
 
-    const result = await login(user);
+    const result = await register(user);
 
-    if (!result.data?.login.errors && result.data?.login.user) {
+    if (!result.data?.register.errors && result.data?.register.user) {
       setUsernameError("");
       setPasswordError("");
       window.location.href = "/dashboard";
-    } else if (result.data?.login.errors) {
-      result.data?.login.errors.forEach((error) => {
+    } else if (result.data?.register.errors) {
+      result.data?.register.errors.forEach((error) => {
         if (error.field == "username") {
           setUsernameError(error.message);
         } else if (error.field == "password") {
@@ -49,7 +49,7 @@ export default function login() {
           <div className="w-full grid place-items-center mb-4">
             <div className="flex items-center flex-col">
               <div className="text-2xl font-medium">Learn Cards</div>
-              <div>Sign In</div>
+              <div>Sign Up</div>
             </div>
           </div>
 
@@ -118,17 +118,14 @@ export default function login() {
                 type="submit"
                 className="px-4 py-2 font-medium inline-flex justify-center text-purple-900 bg-purple-200 rounded-md hover:bg-purple-300 focus:focus:outline-none"
               >
-                Sign In
+                Sign Up
               </button>
-              <Link href="reset-password">
-                <a className="text-blue-600">Forgot password?</a>
-              </Link>
             </div>
           </form>
         </div>
         <div className="mt-4 flex justify-center">
-          <Link href="register">
-            <a className="text-blue-600">Dont have an account?</a>
+          <Link href="login">
+            <a className="text-blue-600">Already have an account?</a>
           </Link>
         </div>
         <div className="absolute w-full text-gray-400 left-0 bottom-0 flex justify-center py-4">

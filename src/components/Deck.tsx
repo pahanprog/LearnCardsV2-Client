@@ -75,7 +75,7 @@ const Deck: React.FC<DeckProps> = ({ id }) => {
   };
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col">
       {fetching ? (
         <div className="grid place-items-center h-screen w-full">
           <FontAwesomeIcon icon={faSpinner} spin size="5x" />
@@ -137,7 +137,7 @@ const Deck: React.FC<DeckProps> = ({ id }) => {
             }  border-gray-500 py-2 cursor-pointer`}
             onClick={() => setBodyCards(false)}
           >
-            <div>Learners</div>
+            <div>Learners ({data?.deck?.learners.length})</div>
           </li>
         </ul>
       </div>

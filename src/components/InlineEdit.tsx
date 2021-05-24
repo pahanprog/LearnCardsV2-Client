@@ -30,13 +30,13 @@ export const InlineEdit: React.FC<InlineEditProps> = ({
         >
           {textarea ? (
             <textarea
-              className="w-full px-2 text-2xl font-bold focus:outline-none"
+              className="w-full px-2 text-2xl font-bold focus:outline-none bg-transparent"
               value={valueCopy}
               onChange={(e) => setValueCopy(e.target.value)}
             />
           ) : (
             <input
-              className="w-full px-2 text-3xl font-bold focus:outline-none"
+              className="w-full px-2 text-3xl font-bold focus:outline-none bg-transparent"
               value={valueCopy}
               onChange={(e) => setValueCopy(e.target.value)}
             />

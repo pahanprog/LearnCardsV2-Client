@@ -18,7 +18,6 @@ try {
 }
 
 export default function App({ Component, pageProps }: AppProps) {
-  console.log(process.env.API_URL);
   return (
     <Provider value={client}>
       <Component {...pageProps} />

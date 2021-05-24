@@ -15,6 +15,7 @@ export type Scalars = {
 };
 
 export type Query = {
+  __typename?: 'Query';
   decks?: Maybe<Array<Deck>>;
   deck?: Maybe<Deck>;
   deckSearch?: Maybe<Array<Deck>>;
@@ -38,6 +39,7 @@ export type QueryGetUsernameArgs = {
 };
 
 export type Deck = {
+  __typename?: 'Deck';
   id: Scalars['Float'];
   cards: Array<Card>;
   creatorId: Scalars['Float'];
@@ -50,6 +52,7 @@ export type Deck = {
 };
 
 export type Card = {
+  __typename?: 'Card';
   id: Scalars['Float'];
   number: Scalars['Float'];
   parentId: Scalars['Float'];
@@ -58,6 +61,7 @@ export type Card = {
 };
 
 export type User = {
+  __typename?: 'User';
   id: Scalars['Float'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
@@ -65,6 +69,7 @@ export type User = {
 };
 
 export type Mutation = {
+  __typename?: 'Mutation';
   createDeck?: Maybe<Deck>;
   updateDeckInfo?: Maybe<Deck>;
   updateDeckCards?: Maybe<Deck>;
@@ -132,11 +137,13 @@ export type CardInputWithId = {
 };
 
 export type UserResponse = {
+  __typename?: 'UserResponse';
   errors?: Maybe<Array<FieldError>>;
   user?: Maybe<User>;
 };
 
 export type FieldError = {
+  __typename?: 'FieldError';
   field: Scalars['String'];
   message: Scalars['String'];
 };
@@ -158,14 +165,14 @@ export type CreateDeckMutationVariables = Exact<{
 }>;
 
 
-export type CreateDeckMutation = { createDeck?: Maybe<{ id: number, title: string, description: string }> };
+export type CreateDeckMutation = { __typename?: 'Mutation', createDeck?: Maybe<{ __typename?: 'Deck', id: number, title: string, description: string }> };
 
 export type DeleteDeckMutationVariables = Exact<{
   id: Scalars['Float'];
 }>;
 
 
-export type DeleteDeckMutation = { deleteDeck: boolean };
+export type DeleteDeckMutation = { __typename?: 'Mutation', deleteDeck: boolean };
 
 export type LoginMutationVariables = Exact<{
   username: Scalars['String'];
@@ -173,14 +180,22 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { login: { errors?: Maybe<Array<{ field: string, message: string }>>, user?: Maybe<{ id: number, username: string }> } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', errors?: Maybe<Array<{ __typename?: 'FieldError', field: string, message: string }>>, user?: Maybe<{ __typename?: 'User', id: number, username: string }> } };
+
+export type RegisterMutationVariables = Exact<{
+  username: Scalars['String'];
+  password: Scalars['String'];
+}>;
+
+
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', errors?: Maybe<Array<{ __typename?: 'FieldError', field: string, message: string }>>, user?: Maybe<{ __typename?: 'User', id: number, username: string }> } };
 
 export type StartLearningMutationVariables = Exact<{
   id: Scalars['Float'];
 }>;
 
 
-export type StartLearningMutation = { startLearning?: Maybe<{ id: number, creatorId: number, learners: Array<{ id: number, username: string }> }> };
+export type StartLearningMutation = { __typename?: 'Mutation', startLearning?: Maybe<{ __typename?: 'Deck', id: number, creatorId: number, learners: Array<{ __typename?: 'User', id: number, username: string }> }> };
 
 export type UpdateCardMutationVariables = Exact<{
   id: Scalars['Float'];
@@ -189,7 +204,7 @@ export type UpdateCardMutationVariables = Exact<{
 }>;
 
 
-export type UpdateCardMutation = { updateCard?: Maybe<{ id: number, question: string, answer: string }> };
+export type UpdateCardMutation = { __typename?: 'Mutation', updateCard?: Maybe<{ __typename?: 'Card', id: number, question: string, answer: string }> };
 
 export type UpdateDeckCardsMutationVariables = Exact<{
   id: Scalars['Float'];
@@ -198,7 +213,7 @@ export type UpdateDeckCardsMutationVariables = Exact<{
 }>;
 
 
-export type UpdateDeckCardsMutation = { updateDeckCards?: Maybe<{ id: number, title: string, description: string, cards: Array<{ id: number, number: number, question: string, answer: string }> }> };
+export type UpdateDeckCardsMutation = { __typename?: 'Mutation', updateDeckCards?: Maybe<{ __typename?: 'Deck', id: number, title: string, description: string, cards: Array<{ __typename?: 'Card', id: number, number: number, question: string, answer: string }> }> };
 
 export type UpdateDeckInfoMutationVariables = Exact<{
   title: Scalars['String'];
@@ -207,38 +222,38 @@ export type UpdateDeckInfoMutationVariables = Exact<{
 }>;
 
 
-export type UpdateDeckInfoMutation = { updateDeckInfo?: Maybe<{ title: string, description: string }> };
+export type UpdateDeckInfoMutation = { __typename?: 'Mutation', updateDeckInfo?: Maybe<{ __typename?: 'Deck', title: string, description: string }> };
 
 export type DeckQueryVariables = Exact<{
   id: Scalars['Float'];
 }>;
 
 
-export type DeckQuery = { deck?: Maybe<{ title: string, description: string, creator: { username: string }, learners: Array<{ username: string }>, cards: Array<{ id: number, number: number, question: string, answer: string }> }> };
+export type DeckQuery = { __typename?: 'Query', deck?: Maybe<{ __typename?: 'Deck', title: string, description: string, creator: { __typename?: 'User', username: string }, learners: Array<{ __typename?: 'User', username: string }>, cards: Array<{ __typename?: 'Card', id: number, number: number, question: string, answer: string }> }> };
 
 export type DeckSearchQueryVariables = Exact<{
   title: Scalars['String'];
 }>;
 
 
-export type DeckSearchQuery = { deckSearch?: Maybe<Array<{ id: number, title: string, description: string, creator: { username: string }, cards: Array<{ number: number, question: string, answer: string }>, learners: Array<{ username: string }> }>> };
+export type DeckSearchQuery = { __typename?: 'Query', deckSearch?: Maybe<Array<{ __typename?: 'Deck', id: number, title: string, description: string, creator: { __typename?: 'User', username: string }, cards: Array<{ __typename?: 'Card', number: number, question: string, answer: string }>, learners: Array<{ __typename?: 'User', username: string }> }>> };
 
 export type DecksPreviewQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type DecksPreviewQuery = { decks?: Maybe<Array<{ id: number, title: string, description: string }>> };
+export type DecksPreviewQuery = { __typename?: 'Query', decks?: Maybe<Array<{ __typename?: 'Deck', id: number, title: string, description: string }>> };
 
 export type GetUsernameQueryVariables = Exact<{
   id: Scalars['Float'];
 }>;
 
 
-export type GetUsernameQuery = { getUsername?: Maybe<{ username: string }> };
+export type GetUsernameQuery = { __typename?: 'Query', getUsername?: Maybe<{ __typename?: 'User', username: string }> };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { me?: Maybe<{ id: number, createdAt: string, updatedAt: string, username: string }> };
+export type MeQuery = { __typename?: 'Query', me?: Maybe<{ __typename?: 'User', id: number, createdAt: string, updatedAt: string, username: string }> };
 
 
 export const CreateDeckDocument = gql`
@@ -280,6 +295,24 @@ export const LoginDocument = gql`
 
 export function useLoginMutation() {
   return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
+};
+export const RegisterDocument = gql`
+    mutation Register($username: String!, $password: String!) {
+  register(options: {username: $username, password: $password}) {
+    errors {
+      field
+      message
+    }
+    user {
+      id
+      username
+    }
+  }
+}
+    `;
+
+export function useRegisterMutation() {
+  return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
 };
 export const StartLearningDocument = gql`
     mutation StartLearning($id: Float!) {
