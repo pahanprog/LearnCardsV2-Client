@@ -128,7 +128,7 @@ export default function login() {
         </div>
         <div className="mt-4 flex justify-center">
           <Link href="register">
-            <a className="text-blue-600">Dont have an account?</a>
+            <a className="text-blue-600">Don't have an account?</a>
           </Link>
         </div>
         <div className="absolute w-full text-gray-400 left-0 bottom-0 flex justify-center py-4">

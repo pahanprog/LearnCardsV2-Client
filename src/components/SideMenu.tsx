@@ -4,13 +4,13 @@ import { useIsAuth } from "../utils/useIsAuth";
 import CreateDeckBtn from "./CreateDeckBtn";
 import DashboardLink from "./DashboardLink";
 import { SideDeck } from "./SideDeck";
+import { useRouter } from "next/router";
 
 interface SideMenuProps {
-  changeDeck: Function;
   deckId: number;
 }
 
-const SideMenu: React.FC<SideMenuProps> = ({ changeDeck, deckId }) => {
+const SideMenu: React.FC<SideMenuProps> = ({ deckId }) => {
   useIsAuth();
 
   const [{ data: me }] = useMeQuery();
@@ -19,9 +19,13 @@ const SideMenu: React.FC<SideMenuProps> = ({ changeDeck, deckId }) => {
 
   const [edit, setEdit] = useState(false);
 
+  const router = useRouter();
+
   useEffect(() => {
     if (data?.decks?.length != 0 && data?.decks) {
-      changeDeck(data?.decks[0].id);
+      router.replace(`/dashboard?deck=${data.decks[0].id}`, undefined, {
+        shallow: true,
+      });
     }
   }, [data]);
 
@@ -57,7 +61,6 @@ const SideMenu: React.FC<SideMenuProps> = ({ changeDeck, deckId }) => {
               if (deck.id == deckId) {
                 return (
                   <SideDeck
-                    changeDeck={changeDeck}
                     title={deck.title}
                     description={deck.description}
                     id={deck.id}
@@ -68,7 +71,6 @@ const SideMenu: React.FC<SideMenuProps> = ({ changeDeck, deckId }) => {
               } else {
                 return (
                   <SideDeck
-                    changeDeck={changeDeck}
                     title={deck.title}
                     description={deck.description}
                     id={deck.id}

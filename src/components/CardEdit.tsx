@@ -89,19 +89,19 @@ const CardEdit: React.FC<CardEditProps> = ({ handleDone, cards, deckId }) => {
       <div className="flex-1">
         {cardsValues.map((card, index) => {
           return (
-            <div className="flex items-center mb-4">
+            <div className="flex items-center mb-4" key={index}>
               <div className="mr-4">{card.number}</div>
               <input
                 type="text"
                 name="question"
-                className="flex-1 mr-2 border-2 border-gray-300 p-2 rounded-md rounded-md focus:outline-none"
+                className="flex-1 mr-2 border-2 border-gray-300 p-2 rounded-md focus:outline-none"
                 value={cardsValues[index].question}
                 onChange={(e) => handleChange(e, index)}
               />
               <input
                 type="text"
                 name="answer"
-                className="flex-1 ml-2 border-2 border-gray-300 p-2 rounded-md rounded-md focus:outline-none"
+                className="flex-1 ml-2 border-2 border-gray-300 p-2 rounded-md focus:outline-none"
                 value={cardsValues[index].answer}
                 onChange={(e) => handleChange(e, index)}
                 onKeyDown={(e) => {
@@ -112,37 +112,34 @@ const CardEdit: React.FC<CardEditProps> = ({ handleDone, cards, deckId }) => {
                 }}
               />
               <div
-                className="ml-4 w-10 h-8 rounded grid place-items-center bg-red-500 cursor-pointer"
+                className="ml-4 w-10 h-8 rounded grid place-items-center text-red-800 bg-red-200 cursor-pointer"
                 onClick={() => handleDelete(index)}
               >
-                <FontAwesomeIcon icon={faTimes} color="white" />
+                <FontAwesomeIcon icon={faTimes} />
               </div>
             </div>
           );
         })}
       </div>
       <div className="flex items-center w-full justify-between">
-        <div className="flex items-center cursor-pointer">
-          <FontAwesomeIcon icon={faPlus} color="#6d28d9" />
-          <div
-            className="ml-2 text-purple-700 font-semibold"
-            onClick={handleAdd}
-          >
+        <div className="flex items-center cursor-pointer text-purple-600">
+          <FontAwesomeIcon icon={faPlus} />
+          <div className="ml-2 font-semibold" onClick={handleAdd}>
             Add Card
           </div>
         </div>
         <div className="flex items-center">
           <span
-            className="underline font-semibold mr-4 cursor-pointer"
+            className="undercursor-pointer inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-200 rounded-md hover:bg-blue-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-500line mr-4 cursor-pointer"
             onClick={() => handleDone()}
           >
             Cancel
           </span>
           <button
             type="submit"
-            className="px-4 py-1 bg-purple-700 rounded-md text-white font-semibold cursor-pointer max-w-max"
+            className="cursor-pointer inline-flex justify-center px-4 py-2 text-sm font-medium text-purple-900 bg-purple-200 rounded-md hover:bg-purple-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-500"
           >
-            Done
+            Save
           </button>
         </div>
       </div>

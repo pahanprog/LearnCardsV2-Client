@@ -91,7 +91,6 @@ const Deck: React.FC<DeckProps> = ({ id }) => {
             edit={desc.edit}
             value={desc.value}
             changeState={updateDesc}
-            textarea
           />
           <div className="flex mb-3">
             <div className="mr-2">Creator:</div>
@@ -153,24 +152,32 @@ const Deck: React.FC<DeckProps> = ({ id }) => {
             <div>
               Your deck has no cards. Add cards to get started
               <span
-                className="max-w-max mt-2 block bg-purple-700 text-white font-semibold py-1 p-4 cursor-pointer rounded-md"
+                className="my-2 mx-3 cursor-pointer inline-flex justify-center px-4 py-2 text-sm font-medium text-purple-900 bg-purple-200 rounded-md hover:bg-purple-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-500"
                 onClick={handleAddClick}
               >
                 Add Cards
               </span>
             </div>
           ) : (
-            data?.deck?.cards.map((card) => {
-              return (
-                <CardPreview
-                  id={card.id}
-                  question={card.question}
-                  answer={card.answer}
-                  key={card.number}
-                  number={card.number}
-                />
-              );
-            })
+            <>
+              {data?.deck?.cards.map((card) => {
+                return (
+                  <CardPreview
+                    id={card.id}
+                    question={card.question}
+                    answer={card.answer}
+                    key={card.number}
+                    number={card.number}
+                  />
+                );
+              })}
+              <span
+                className="my-2 mx-3 cursor-pointer inline-flex justify-center px-4 py-2 text-sm font-medium text-purple-900 bg-purple-200 rounded-md hover:bg-purple-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-500"
+                onClick={handleAddClick}
+              >
+                Add Cards
+              </span>
+            </>
           )
         ) : (
           data?.deck?.learners.map((learner, index) => {

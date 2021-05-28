@@ -25,7 +25,7 @@ export const InlineEdit: React.FC<InlineEditProps> = ({
     <div className="flex items-center group mb-3">
       {edit ? (
         <div
-          className="w-full border-2 border-purple-500 rounded-md px-2
+          className="w-full border-2 border-purple-400 rounded-md px-2
         py-1 flex items-center"
         >
           {textarea ? (
@@ -51,7 +51,7 @@ export const InlineEdit: React.FC<InlineEditProps> = ({
               className="cursor-pointer rounded-full hover:bg-gray-200"
             />
             <span
-              className="rounded-md my-2 py-1 px-4 mx-3 bg-purple-700 text-white cursor-pointer font-semibold"
+              className="my-2 mx-3 cursor-pointer inline-flex justify-center px-4 py-2 text-sm font-medium text-purple-700 bg-purple-200 rounded-md hover:bg-purple-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-500"
               onClick={() =>
                 changeState({ value: valueCopy, edit: false, update: true })
               }

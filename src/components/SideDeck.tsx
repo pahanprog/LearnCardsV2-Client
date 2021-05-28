@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import DeleteDeckButton from "./DeleteDeckButton";
+import { useRouter } from "next/router";
 
 interface SideDeckProps {
   title: string;
   description: string;
   id: number;
-  changeDeck: Function;
   selected?: boolean;
 }
 
@@ -13,11 +12,14 @@ export const SideDeck: React.FC<SideDeckProps> = ({
   description,
   id,
   title,
-  changeDeck,
   selected,
 }) => {
+  const router = useRouter();
+
   const handleClick = () => {
-    changeDeck(id);
+    if (!selected) {
+      router.push(`/dashboard?deck=${id}`, undefined, { shallow: true });
+    }
   };
 
   return (
@@ -27,7 +29,9 @@ export const SideDeck: React.FC<SideDeckProps> = ({
         selected ? "mr-4 border-l-8 border-purple-300" : null
       }`}
     >
-      <div className="px-4 last:mb-0 cursor-pointer">
+      <div
+        className={`px-4 ${selected ? "pl-2" : null} last:mb-0 cursor-pointer`}
+      >
         <div className="truncate ">{title}</div>
         <div className="truncate ">{description}</div>
       </div>
