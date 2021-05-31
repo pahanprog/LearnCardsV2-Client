@@ -3,5 +3,8 @@ query DecksPreview {
     id
     title
     description
+    creator {
+      username
+    }
   }
 }

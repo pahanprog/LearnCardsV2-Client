@@ -7,11 +7,11 @@ import { useState } from "react";
 import { useLoginMutation } from "../generated/graphql";
 
 export default function login() {
-  const [username, setUsername] = useState(String);
+  const [usernameOrEmail, setUsernameOrEmail] = useState(String);
   const [password, setPassword] = useState(String);
   const [remember, setRemember] = useState(false);
 
-  const [usernameError, setUsernameError] = useState(String);
+  const [usernameOrEmailError, setUsernameOrEmailError] = useState(String);
   const [passwordError, setPasswordError] = useState(String);
 
   const [{}, login] = useLoginMutation();
@@ -20,22 +20,22 @@ export default function login() {
     e.preventDefault();
 
     const user = {
-      username,
+      usernameOrEmail,
       password,
     };
 
     const result = await login(user);
 
     if (!result.data?.login.errors && result.data?.login.user) {
-      setUsernameError("");
+      setUsernameOrEmailError("");
       setPasswordError("");
       window.location.href = "/dashboard";
     } else if (result.data?.login.errors) {
       result.data?.login.errors.forEach((error) => {
-        if (error.field == "username") {
-          setUsernameError(error.message);
+        if (error.field == "usernameOrEmail") {
+          setUsernameOrEmailError(error.message);
         } else if (error.field == "password") {
-          setUsernameError("");
+          setUsernameOrEmailError("");
           setPasswordError(error.message);
         }
       });
@@ -59,17 +59,17 @@ export default function login() {
           >
             <div className="mb-4">
               <label htmlFor="username" className="font-medium">
-                Username
+                Username or email
               </label>
               <input
                 type="text"
                 className="mt-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 name="username"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Username or email"
+                value={usernameOrEmail}
+                onChange={(e) => setUsernameOrEmail(e.target.value)}
               />
-              {usernameError ? `${usernameError}` : null}
+              {usernameOrEmailError ? `${usernameOrEmailError}` : null}
             </div>
             <div className="mb-4">
               <label htmlFor="password" className="font-medium">
@@ -120,7 +120,7 @@ export default function login() {
               >
                 Sign In
               </button>
-              <Link href="reset-password">
+              <Link href="forgot-password">
                 <a className="text-blue-600">Forgot password?</a>
               </Link>
             </div>

@@ -130,7 +130,7 @@ const CardEdit: React.FC<CardEditProps> = ({ handleDone, cards, deckId }) => {
         </div>
         <div className="flex items-center">
           <span
-            className="undercursor-pointer inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-200 rounded-md hover:bg-blue-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-500line mr-4 cursor-pointer"
+            className="cursor-pointer inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-200 rounded-md hover:bg-blue-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-500 mr-4"
             onClick={() => handleDone()}
           >
             Cancel

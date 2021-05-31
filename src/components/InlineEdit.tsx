@@ -6,14 +6,14 @@ interface InlineEditProps {
   edit: boolean;
   value: string;
   changeState: Function;
-  textarea?: boolean;
+  description?: boolean;
 }
 
 export const InlineEdit: React.FC<InlineEditProps> = ({
   edit,
   value,
   changeState,
-  textarea,
+  description,
 }) => {
   const [valueCopy, setValueCopy] = useState(value);
 
@@ -28,9 +28,9 @@ export const InlineEdit: React.FC<InlineEditProps> = ({
           className="w-full border-2 border-purple-400 rounded-md px-2
         py-1 flex items-center"
         >
-          {textarea ? (
+          {description ? (
             <textarea
-              className="w-full px-2 text-2xl font-bold focus:outline-none bg-transparent"
+              className="w-full px-2 text-xl focus:outline-none bg-transparent"
               value={valueCopy}
               onChange={(e) => setValueCopy(e.target.value)}
             />
@@ -61,18 +61,18 @@ export const InlineEdit: React.FC<InlineEditProps> = ({
           </div>
         </div>
       ) : (
-        <div className={`${textarea ? "text-3xl" : "text-4xl"} font-bold`}>
+        <div className={`${description ? "text-xl" : "text-4xl font-bold"}`}>
           {value}
         </div>
       )}
-      <FontAwesomeIcon
-        onClick={() => changeState({ value: value, edit: true })}
-        icon={faPen}
-        size="2x"
-        className={`ml-2 p-2 transition-opacity bg-gray-200 opacity-0 cursor-pointer rounded-full group-hover:opacity-100 ${
+      <div
+        className={`ml-2 h-6 w-6 p-1 grid place-items-center transition-all opacity-0 group-hover:opacity-100 hover:bg-gray-200 cursor-pointer rounded-full group ${
           edit ? "hidden" : null
         }`}
-      />
+        onClick={() => changeState({ value: value, edit: true })}
+      >
+        <FontAwesomeIcon icon={faPen} size="sm" className="text-gray-700" />
+      </div>
     </div>
   );
 };

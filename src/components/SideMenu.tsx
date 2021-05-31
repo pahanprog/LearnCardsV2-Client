@@ -65,6 +65,8 @@ const SideMenu: React.FC<SideMenuProps> = ({ deckId }) => {
                     description={deck.description}
                     id={deck.id}
                     key={deck.id}
+                    edit={edit}
+                    creator={deck.creator.username}
                     selected
                   />
                 );
@@ -75,6 +77,8 @@ const SideMenu: React.FC<SideMenuProps> = ({ deckId }) => {
                     description={deck.description}
                     id={deck.id}
                     key={deck.id}
+                    edit={edit}
+                    creator={deck.creator.username}
                   />
                 );
               }

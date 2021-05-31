@@ -9,8 +9,11 @@ import { useRegisterMutation } from "../generated/graphql";
 export default function register() {
   const [username, setUsername] = useState(String);
   const [password, setPassword] = useState(String);
+  const [email, setEmail] = useState(String);
+
   const [remember, setRemember] = useState(false);
 
+  const [emailError, setEmailError] = useState(String);
   const [usernameError, setUsernameError] = useState(String);
   const [passwordError, setPasswordError] = useState(String);
 
@@ -20,6 +23,7 @@ export default function register() {
     e.preventDefault();
 
     const user = {
+      email,
       username,
       password,
     };
@@ -27,14 +31,22 @@ export default function register() {
     const result = await register(user);
 
     if (!result.data?.register.errors && result.data?.register.user) {
+      setEmailError("");
       setUsernameError("");
       setPasswordError("");
       window.location.href = "/dashboard";
     } else if (result.data?.register.errors) {
       result.data?.register.errors.forEach((error) => {
-        if (error.field == "username") {
+        if (error.field == "email") {
+          setPasswordError("");
+          setUsernameError("");
+          setEmailError(error.message);
+        } else if (error.field == "username") {
+          setPasswordError("");
+          setEmailError("");
           setUsernameError(error.message);
         } else if (error.field == "password") {
+          setEmailError("");
           setUsernameError("");
           setPasswordError(error.message);
         }
@@ -57,6 +69,20 @@ export default function register() {
             className="w-10/12 flex flex-col mx-auto"
             onSubmit={(e) => handleSubmit(e)}
           >
+            <div className="mb-4">
+              <label htmlFor="email" className="font-medium">
+                Email
+              </label>
+              <input
+                type="text"
+                className="mt-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                name="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              {emailError ? `${emailError}` : null}
+            </div>
             <div className="mb-4">
               <label htmlFor="username" className="font-medium">
                 Username

@@ -32,7 +32,7 @@ const SettingsMenu = () => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="py-2 absolute right-0 top-0 w-56 mt-12 origin-top-righti bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+        <Menu.Items className="py-2 absolute right-0 top-10 w-56 origin-top-righti bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div className="grid place-items-center">
             <Menu.Item>
               <button className="px-2 py-2 w-full hover:bg-gray-100">

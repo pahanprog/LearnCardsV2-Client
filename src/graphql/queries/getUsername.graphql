@@ -1,5 +1,0 @@
-query GetUsername($id: Float!) {
-  getUsername(id: $id) {
-    username
-  }
-}

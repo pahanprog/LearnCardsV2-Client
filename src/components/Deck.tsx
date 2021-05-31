@@ -75,7 +75,7 @@ const Deck: React.FC<DeckProps> = ({ id }) => {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col text-gray-800">
       {fetching ? (
         <div className="grid place-items-center h-screen w-full">
           <FontAwesomeIcon icon={faSpinner} spin size="5x" />
@@ -91,6 +91,7 @@ const Deck: React.FC<DeckProps> = ({ id }) => {
             edit={desc.edit}
             value={desc.value}
             changeState={updateDesc}
+            description
           />
           <div className="flex mb-3">
             <div className="mr-2">Creator:</div>

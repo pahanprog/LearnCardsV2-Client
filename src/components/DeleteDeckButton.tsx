@@ -1,32 +1,47 @@
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState } from "react";
-import { useDeleteDeckMutation } from "../generated/graphql";
+import { Transition, Dialog } from "@headlessui/react";
+import result from "postcss/lib/result";
+import React, { Fragment, useState } from "react";
+import {
+  useDeleteDeckMutation,
+  useStopLearningMutation,
+} from "../generated/graphql";
+import DeckSearchResult from "./DeckSearchResult";
 import Modal from "./Modal";
 
 interface DeleteDeckButtonProps {
   id: number;
   title: string;
+  learning?: boolean;
 }
 
-const DeleteDeckButton: React.FC<DeleteDeckButtonProps> = ({ id, title }) => {
+const DeleteDeckButton: React.FC<DeleteDeckButtonProps> = ({
+  id,
+  title,
+  learning,
+}) => {
   const [{ error, data }, deleteDeck] = useDeleteDeckMutation();
-  const [open, setOpen] = useState(false);
+  const [{}, stopLearning] = useStopLearningMutation();
+  const [isOpen, setIsOpen] = useState(false);
 
   const openModal = () => {
-    setOpen(true);
+    setIsOpen(true);
   };
 
   const closeModal = () => {
-    setOpen(false);
+    setIsOpen(false);
   };
 
   const handleDelete = () => {
     const deck = {
       id: id,
     };
-
-    deleteDeck(deck);
+    if (learning) {
+      stopLearning(deck);
+    } else {
+      deleteDeck(deck);
+    }
 
     closeModal();
   };
@@ -34,34 +49,77 @@ const DeleteDeckButton: React.FC<DeleteDeckButtonProps> = ({ id, title }) => {
   return (
     <>
       <div
-        className="w-5 h-5 rounded-full transition-opacity opacity-0 group-hover:opacity-100 bg-opacity-50 bg-gray-300 cursor-pointer absolute right-0 top-0 mt-2 -mr-2 grid place-items-center"
+        className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 text-gray-600 cursor-pointer"
         onClick={openModal}
       >
         <FontAwesomeIcon icon={faTimes} size="sm" />
       </div>
-      <Modal title="Caution" show={open} close={closeModal}>
-        <div className="text-center flex-1">
-          You are about to remove the <strong>{title}</strong> deck from your
-          library. Are you sure that you wish to proceed?
-        </div>
-        <div className="flex items-center">
-          <div className="flex-1 flex justify-end mr-4">
-            <span
-              className="py-1 px-4 bg-purple-700 text-white fint-semibold rounded-md"
-              onClick={closeModal}
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog
+          as="div"
+          className="fixed inset-0 z-10 overflow-y-auto"
+          onClose={closeModal}
+        >
+          <div className="min-h-screen px-4 text-center">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
             >
-              Cancel
+              <Dialog.Overlay className="fixed inset-0 bg-gray-400 bg-opacity-30" />
+            </Transition.Child>
+            <span
+              className="inline-block h-screen align-middle"
+              aria-hidden="true"
+            >
+              &#8203;
             </span>
-          </div>
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white border border-gray-100 shadow-xl rounded-2xl">
+                <Dialog.Title
+                  as="h3"
+                  className="text-lg font-medium leading-6 text-gray-900 text-center"
+                >
+                  Caution
+                </Dialog.Title>
+                <div className="mt-4">
+                  <div className="text-center flex-1">
+                    You are about to remove the <strong>{title}</strong> deck
+                    from your library. Are you sure that you wish to proceed?
+                  </div>
+                  <div className="flex justify-around mt-4">
+                    <button
+                      onClick={closeModal}
+                      className="cursor-pointer inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-200 rounded-md hover:bg-blue-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+                    >
+                      Cancel
+                    </button>
 
-          <div
-            className="flex-1 flex justify-start ml-4 underline"
-            onClick={handleDelete}
-          >
-            <span>Yes, remove deck</span>
+                    <button
+                      onClick={handleDelete}
+                      className="cursor-pointer inline-flex justify-center px-4 py-2 text-sm font-medium text-red-800 bg-red-200 rounded-md hover:bg-red-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-red-500"
+                    >
+                      Yes, remove deck
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </Transition.Child>
           </div>
-        </div>
-      </Modal>
+        </Dialog>
+      </Transition>
     </>
   );
 };

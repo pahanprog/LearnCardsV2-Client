@@ -7,6 +7,7 @@ import DeckSearchResult from "./DeckSearchResult";
 const DeckSearch = () => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const [input, setInput] = useState(String);
   const [search, setSearch] = useState(String);
   const [result, setResult] = useState(false);
 
@@ -15,13 +16,17 @@ const DeckSearch = () => {
   };
 
   const openModal = () => {
+    setInput("");
+    setSearch("");
+    setResult(false);
     setIsOpen(true);
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (search != "") {
+    if (input != "") {
+      setSearch(input);
       setResult(true);
     }
   };
@@ -72,44 +77,43 @@ const DeckSearch = () => {
                 >
                   Search for decks
                 </Dialog.Title>
-                {result ? (
-                  <DeckSearchResult
-                    title={search}
-                    back={() => {
-                      setResult(false);
-                    }}
-                    close={closeModal}
-                  />
-                ) : (
-                  <div className="mt-4">
-                    <form onSubmit={(e) => handleSubmit(e)}>
-                      <div className="px-8">
-                        <input
-                          type="text"
-                          name="search"
-                          value={search}
-                          onChange={(e) => setSearch(e.target.value)}
-                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        />
-                      </div>
-                      <div className="flex justify-around mt-4">
-                        <button
-                          type="button"
-                          className="inline-flex justify-center px-4 py-2 text-sm font-medium text-purple-900 bg-purple-200 rounded-md hover:bg-purple-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-500"
-                          onClick={closeModal}
-                        >
-                          Close
-                        </button>
-                        <button
-                          type="submit"
-                          className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-200 rounded-md hover:bg-blue-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
-                        >
-                          Search
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                )}
+                <div className="mt-4">
+                  <form onSubmit={(e) => handleSubmit(e)}>
+                    <div className="px-8">
+                      <input
+                        type="text"
+                        name="search"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      />
+                    </div>
+                    {result ? (
+                      <DeckSearchResult
+                        title={search}
+                        back={() => {
+                          setResult(false);
+                        }}
+                        close={closeModal}
+                      />
+                    ) : null}
+                    <div className="flex justify-around mt-4">
+                      <button
+                        type="button"
+                        className="inline-flex justify-center px-4 py-2 text-sm font-medium text-purple-900 bg-purple-200 rounded-md hover:bg-purple-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-500"
+                        onClick={closeModal}
+                      >
+                        Close
+                      </button>
+                      <button
+                        type="submit"
+                        className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-200 rounded-md hover:bg-blue-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+                      >
+                        Search
+                      </button>
+                    </div>
+                  </form>
+                </div>
               </div>
             </Transition.Child>
           </div>

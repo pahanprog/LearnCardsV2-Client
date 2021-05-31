@@ -11,12 +11,14 @@ export default function dashboard() {
 
   useEffect(() => {
     const id: number = +router.query.deck;
-    setDeckId(id);
+    if (id) {
+      setDeckId(id);
+    }
   }, [router.query.deck]);
 
   return (
     <div className="flex">
-      <SideMenu changeDeck={setDeckId} deckId={deckId} />
+      <SideMenu deckId={deckId} />
       <div className="bg-white flex-1 grid grid-rows-auto-1 px-8 py-4">
         <Header />
         <Deck id={deckId} />

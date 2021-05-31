@@ -20,7 +20,6 @@ export type Query = {
   deck?: Maybe<Deck>;
   deckSearch?: Maybe<Array<Deck>>;
   me?: Maybe<User>;
-  getUsername?: Maybe<User>;
 };
 
 
@@ -31,11 +30,6 @@ export type QueryDeckArgs = {
 
 export type QueryDeckSearchArgs = {
   title: Scalars['String'];
-};
-
-
-export type QueryGetUsernameArgs = {
-  id: Scalars['Float'];
 };
 
 export type Deck = {
@@ -66,6 +60,7 @@ export type User = {
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
   username: Scalars['String'];
+  email: Scalars['String'];
 };
 
 export type Mutation = {
@@ -75,8 +70,11 @@ export type Mutation = {
   updateDeckCards?: Maybe<Deck>;
   deleteDeck: Scalars['Boolean'];
   startLearning?: Maybe<Deck>;
+  stopLearning: Scalars['Boolean'];
   register: UserResponse;
   login: UserResponse;
+  forgotPassword: Scalars['Boolean'];
+  changePassword: ChangePasswordResponse;
   logout: Scalars['Boolean'];
   updateCard?: Maybe<Card>;
 };
@@ -110,13 +108,30 @@ export type MutationStartLearningArgs = {
 };
 
 
+export type MutationStopLearningArgs = {
+  id: Scalars['Float'];
+};
+
+
 export type MutationRegisterArgs = {
-  options: UsernamePasswordInput;
+  options: RegisterInput;
 };
 
 
 export type MutationLoginArgs = {
-  options: UsernamePasswordInput;
+  Password: Scalars['String'];
+  UsernameOrEmail: Scalars['String'];
+};
+
+
+export type MutationForgotPasswordArgs = {
+  email: Scalars['String'];
+};
+
+
+export type MutationChangePasswordArgs = {
+  newPassword: Scalars['String'];
+  token: Scalars['String'];
 };
 
 
@@ -148,9 +163,16 @@ export type FieldError = {
   message: Scalars['String'];
 };
 
-export type UsernamePasswordInput = {
+export type RegisterInput = {
+  email: Scalars['String'];
   username: Scalars['String'];
   password: Scalars['String'];
+};
+
+export type ChangePasswordResponse = {
+  __typename?: 'ChangePasswordResponse';
+  errors?: Maybe<Array<FieldError>>;
+  changed?: Maybe<Scalars['Boolean']>;
 };
 
 export type CardInput = {
@@ -158,6 +180,14 @@ export type CardInput = {
   question: Scalars['String'];
   answer: Scalars['String'];
 };
+
+export type ChangePasswordMutationVariables = Exact<{
+  newPassword: Scalars['String'];
+  token: Scalars['String'];
+}>;
+
+
+export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: { __typename?: 'ChangePasswordResponse', changed?: Maybe<boolean>, errors?: Maybe<Array<{ __typename?: 'FieldError', field: string, message: string }>> } };
 
 export type CreateDeckMutationVariables = Exact<{
   title: Scalars['String'];
@@ -174,13 +204,20 @@ export type DeleteDeckMutationVariables = Exact<{
 
 export type DeleteDeckMutation = { __typename?: 'Mutation', deleteDeck: boolean };
 
+export type ForgotPasswordMutationVariables = Exact<{
+  email: Scalars['String'];
+}>;
+
+
+export type ForgotPasswordMutation = { __typename?: 'Mutation', forgotPassword: boolean };
+
 export type LoginMutationVariables = Exact<{
-  username: Scalars['String'];
+  usernameOrEmail: Scalars['String'];
   password: Scalars['String'];
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', errors?: Maybe<Array<{ __typename?: 'FieldError', field: string, message: string }>>, user?: Maybe<{ __typename?: 'User', id: number, username: string }> } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', user?: Maybe<{ __typename?: 'User', id: number, username: string, email: string }>, errors?: Maybe<Array<{ __typename?: 'FieldError', field: string, message: string }>> } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -188,12 +225,13 @@ export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
 
 export type RegisterMutationVariables = Exact<{
+  email: Scalars['String'];
   username: Scalars['String'];
   password: Scalars['String'];
 }>;
 
 
-export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', errors?: Maybe<Array<{ __typename?: 'FieldError', field: string, message: string }>>, user?: Maybe<{ __typename?: 'User', id: number, username: string }> } };
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', user?: Maybe<{ __typename?: 'User', id: number, username: string, email: string }>, errors?: Maybe<Array<{ __typename?: 'FieldError', field: string, message: string }>> } };
 
 export type StartLearningMutationVariables = Exact<{
   id: Scalars['Float'];
@@ -201,6 +239,11 @@ export type StartLearningMutationVariables = Exact<{
 
 
 export type StartLearningMutation = { __typename?: 'Mutation', startLearning?: Maybe<{ __typename?: 'Deck', id: number, creatorId: number, learners: Array<{ __typename?: 'User', id: number, username: string }> }> };
+
+export type StopLearningMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type StopLearningMutation = { __typename?: 'Mutation', stopLearning: boolean };
 
 export type UpdateCardMutationVariables = Exact<{
   id: Scalars['Float'];
@@ -246,14 +289,7 @@ export type DeckSearchQuery = { __typename?: 'Query', deckSearch?: Maybe<Array<{
 export type DecksPreviewQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type DecksPreviewQuery = { __typename?: 'Query', decks?: Maybe<Array<{ __typename?: 'Deck', id: number, title: string, description: string }>> };
-
-export type GetUsernameQueryVariables = Exact<{
-  id: Scalars['Float'];
-}>;
-
-
-export type GetUsernameQuery = { __typename?: 'Query', getUsername?: Maybe<{ __typename?: 'User', username: string }> };
+export type DecksPreviewQuery = { __typename?: 'Query', decks?: Maybe<Array<{ __typename?: 'Deck', id: number, title: string, description: string, creator: { __typename?: 'User', username: string } }>> };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -261,6 +297,21 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 export type MeQuery = { __typename?: 'Query', me?: Maybe<{ __typename?: 'User', id: number, createdAt: string, updatedAt: string, username: string }> };
 
 
+export const ChangePasswordDocument = gql`
+    mutation ChangePassword($newPassword: String!, $token: String!) {
+  changePassword(newPassword: $newPassword, token: $token) {
+    errors {
+      field
+      message
+    }
+    changed
+  }
+}
+    `;
+
+export function useChangePasswordMutation() {
+  return Urql.useMutation<ChangePasswordMutation, ChangePasswordMutationVariables>(ChangePasswordDocument);
+};
 export const CreateDeckDocument = gql`
     mutation CreateDeck($title: String!, $description: String!) {
   createDeck(input: {title: $title, description: $description}) {
@@ -283,16 +334,26 @@ export const DeleteDeckDocument = gql`
 export function useDeleteDeckMutation() {
   return Urql.useMutation<DeleteDeckMutation, DeleteDeckMutationVariables>(DeleteDeckDocument);
 };
+export const ForgotPasswordDocument = gql`
+    mutation ForgotPassword($email: String!) {
+  forgotPassword(email: $email)
+}
+    `;
+
+export function useForgotPasswordMutation() {
+  return Urql.useMutation<ForgotPasswordMutation, ForgotPasswordMutationVariables>(ForgotPasswordDocument);
+};
 export const LoginDocument = gql`
-    mutation Login($username: String!, $password: String!) {
-  login(options: {username: $username, password: $password}) {
-    errors {
-      field
-      message
-    }
+    mutation Login($usernameOrEmail: String!, $password: String!) {
+  login(UsernameOrEmail: $usernameOrEmail, Password: $password) {
     user {
       id
       username
+      email
+    }
+    errors {
+      field
+      message
     }
   }
 }
@@ -311,15 +372,16 @@ export function useLogoutMutation() {
   return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument);
 };
 export const RegisterDocument = gql`
-    mutation Register($username: String!, $password: String!) {
-  register(options: {username: $username, password: $password}) {
-    errors {
-      field
-      message
-    }
+    mutation Register($email: String!, $username: String!, $password: String!) {
+  register(options: {email: $email, username: $username, password: $password}) {
     user {
       id
       username
+      email
+    }
+    errors {
+      field
+      message
     }
   }
 }
@@ -343,6 +405,15 @@ export const StartLearningDocument = gql`
 
 export function useStartLearningMutation() {
   return Urql.useMutation<StartLearningMutation, StartLearningMutationVariables>(StartLearningDocument);
+};
+export const StopLearningDocument = gql`
+    mutation StopLearning {
+  stopLearning(id: 10)
+}
+    `;
+
+export function useStopLearningMutation() {
+  return Urql.useMutation<StopLearningMutation, StopLearningMutationVariables>(StopLearningDocument);
 };
 export const UpdateCardDocument = gql`
     mutation UpdateCard($id: Float!, $question: String!, $answer: String!) {
@@ -442,23 +513,15 @@ export const DecksPreviewDocument = gql`
     id
     title
     description
+    creator {
+      username
+    }
   }
 }
     `;
 
 export function useDecksPreviewQuery(options: Omit<Urql.UseQueryArgs<DecksPreviewQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DecksPreviewQuery>({ query: DecksPreviewDocument, ...options });
-};
-export const GetUsernameDocument = gql`
-    query GetUsername($id: Float!) {
-  getUsername(id: $id) {
-    username
-  }
-}
-    `;
-
-export function useGetUsernameQuery(options: Omit<Urql.UseQueryArgs<GetUsernameQueryVariables>, 'query'> = {}) {
-  return Urql.useQuery<GetUsernameQuery>({ query: GetUsernameDocument, ...options });
 };
 export const MeDocument = gql`
     query Me {
