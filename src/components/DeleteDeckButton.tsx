@@ -1,14 +1,11 @@
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Transition, Dialog } from "@headlessui/react";
-import result from "postcss/lib/result";
 import React, { Fragment, useState } from "react";
 import {
   useDeleteDeckMutation,
   useStopLearningMutation,
 } from "../generated/graphql";
-import DeckSearchResult from "./DeckSearchResult";
-import Modal from "./Modal";
 
 interface DeleteDeckButtonProps {
   id: number;

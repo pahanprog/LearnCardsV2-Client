@@ -240,7 +240,9 @@ export type StartLearningMutationVariables = Exact<{
 
 export type StartLearningMutation = { __typename?: 'Mutation', startLearning?: Maybe<{ __typename?: 'Deck', id: number, creatorId: number, learners: Array<{ __typename?: 'User', id: number, username: string }> }> };
 
-export type StopLearningMutationVariables = Exact<{ [key: string]: never; }>;
+export type StopLearningMutationVariables = Exact<{
+  id: Scalars['Float'];
+}>;
 
 
 export type StopLearningMutation = { __typename?: 'Mutation', stopLearning: boolean };
@@ -407,8 +409,8 @@ export function useStartLearningMutation() {
   return Urql.useMutation<StartLearningMutation, StartLearningMutationVariables>(StartLearningDocument);
 };
 export const StopLearningDocument = gql`
-    mutation StopLearning {
-  stopLearning(id: 10)
+    mutation StopLearning($id: Float!) {
+  stopLearning(id: $id)
 }
     `;
 
