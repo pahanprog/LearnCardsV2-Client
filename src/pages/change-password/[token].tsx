@@ -23,7 +23,7 @@ const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
         setError(error.message);
       });
     } else if (result.data?.changePassword.changed) {
-      //   router.push("/login");
+      router.push("/login");
     }
   };
 
