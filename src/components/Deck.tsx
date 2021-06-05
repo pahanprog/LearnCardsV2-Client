@@ -75,118 +75,137 @@ const Deck: React.FC<DeckProps> = ({ id }) => {
   };
 
   return (
-    <div className="flex flex-col text-gray-800">
-      {fetching ? (
-        <div className="grid place-items-center h-screen w-full">
-          <FontAwesomeIcon icon={faSpinner} spin size="5x" />
-        </div>
-      ) : data?.deck ? (
-        <div className="p-8">
-          <InlineEdit
-            edit={title.edit}
-            value={title.value}
-            changeState={updateTitle}
-          />
-          <InlineEdit
-            edit={desc.edit}
-            value={desc.value}
-            changeState={updateDesc}
-            description
-          />
-          <div className="flex mb-3">
-            <div className="mr-2">Creator:</div>
-            <div className="text-purple-700">{creatorUsername}</div>
-          </div>
-          <div className="flex justify-start">
-            <div className="flex">
-              <div
-                title="Learn"
-                className="w-8 h-8 bg-gray-300 grid place-items-center rounded-full cursor-pointer"
-              >
-                <FontAwesomeIcon icon={faPlay} />
-              </div>
-              <div
-                title="Share"
-                className="w-8 h-8 bg-gray-300 grid place-items-center rounded-full cursor-pointer ml-3"
-              >
-                <FontAwesomeIcon icon={faShareAlt} />
-              </div>
-              <div
-                title="Options"
-                className="w-8 h-8 bg-gray-300 grid place-items-center rounded-full cursor-pointer ml-3"
-              >
-                <FontAwesomeIcon icon={faEllipsisH} />
-              </div>
-            </div>
+    <>
+      {!data?.deck ? (
+        <div className="grid place-items-center">
+          <div>
+            <div>You dont have a deck. Create one or find one.</div>
           </div>
         </div>
-      ) : null}
-      <div className="w-full displat-flex">
-        <ul className="list-none flex bg-gray-300 font-semibold">
-          <li
-            className={`flex-1 grid place-items-center ${
-              bodyCards ? "border-b-8" : "border-b-2"
-            }  border-gray-500 py-2 cursor-pointer`}
-            onClick={() => setBodyCards(true)}
-          >
-            <div>Cards</div>
-          </li>
-          <li
-            className={`flex-1 grid place-items-center ${
-              bodyCards ? "border-b-2" : "border-b-8"
-            }  border-gray-500 py-2 cursor-pointer`}
-            onClick={() => setBodyCards(false)}
-          >
-            <div>Learners ({data?.deck?.learners.length})</div>
-          </li>
-        </ul>
-      </div>
-      <div className="p-3 overflow-auto flex-1">
-        {bodyCards ? (
-          editCards ? (
-            <CardEdit
-              handleDone={handleEditDone}
-              cards={data!.deck!.cards}
-              deckId={id}
-            />
-          ) : data?.deck?.cards.length == 0 ? (
-            <div>
-              Your deck has no cards. Add cards to get started
-              <span
-                className="my-2 mx-3 cursor-pointer inline-flex justify-center px-4 py-2 text-sm font-medium text-purple-900 bg-purple-200 rounded-md hover:bg-purple-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-500"
-                onClick={handleAddClick}
-              >
-                Add Cards
-              </span>
+      ) : (
+        <div className="flex flex-col text-gray-800">
+          {fetching ? (
+            <div className="grid place-items-center h-screen w-full">
+              <FontAwesomeIcon icon={faSpinner} spin size="5x" />
             </div>
-          ) : (
-            <>
-              {data?.deck?.cards.map((card) => {
-                return (
-                  <CardPreview
-                    id={card.id}
-                    question={card.question}
-                    answer={card.answer}
-                    key={card.number}
-                    number={card.number}
-                  />
-                );
-              })}
-              <span
-                className="my-2 mx-3 cursor-pointer inline-flex justify-center px-4 py-2 text-sm font-medium text-purple-900 bg-purple-200 rounded-md hover:bg-purple-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-500"
-                onClick={handleAddClick}
+          ) : data?.deck ? (
+            <div className="p-8">
+              <InlineEdit
+                edit={title.edit}
+                value={title.value}
+                changeState={updateTitle}
+                canEdit={data.deck.canEdit}
+              />
+              <InlineEdit
+                edit={desc.edit}
+                value={desc.value}
+                changeState={updateDesc}
+                canEdit={data.deck.canEdit}
+                description
+              />
+              <div className="flex mb-3">
+                <div className="mr-2">Creator:</div>
+                <div className="text-purple-700">{creatorUsername}</div>
+              </div>
+              <div className="flex justify-start">
+                <div className="flex">
+                  <div
+                    title="Learn"
+                    className="w-8 h-8 bg-gray-300 grid place-items-center rounded-full cursor-pointer"
+                  >
+                    <FontAwesomeIcon icon={faPlay} />
+                  </div>
+                  <div
+                    title="Share"
+                    className="w-8 h-8 bg-gray-300 grid place-items-center rounded-full cursor-pointer ml-3"
+                  >
+                    <FontAwesomeIcon icon={faShareAlt} />
+                  </div>
+                  <div
+                    title="Options"
+                    className="w-8 h-8 bg-gray-300 grid place-items-center rounded-full cursor-pointer ml-3"
+                  >
+                    <FontAwesomeIcon icon={faEllipsisH} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : null}
+          <div className="w-full displat-flex">
+            <ul className="list-none flex bg-gray-300 font-semibold">
+              <li
+                className={`flex-1 grid place-items-center ${
+                  bodyCards ? "border-b-8" : "border-b-2"
+                }  border-gray-500 py-2 cursor-pointer`}
+                onClick={() => setBodyCards(true)}
               >
-                Add Cards
-              </span>
-            </>
-          )
-        ) : (
-          data?.deck?.learners.map((learner, index) => {
-            return <Learner username={learner.username} key={index} />;
-          })
-        )}
-      </div>
-    </div>
+                <div>Cards ({data.deck.cards.length})</div>
+              </li>
+              <li
+                className={`flex-1 grid place-items-center ${
+                  bodyCards ? "border-b-2" : "border-b-8"
+                }  border-gray-500 py-2 cursor-pointer`}
+                onClick={() => setBodyCards(false)}
+              >
+                <div>Learners ({data?.deck?.learners.length})</div>
+              </li>
+            </ul>
+          </div>
+          <div className="p-3 overflow-auto flex-1">
+            {bodyCards ? (
+              editCards ? (
+                <CardEdit
+                  handleDone={handleEditDone}
+                  cards={data!.deck!.cards}
+                  deckId={id}
+                />
+              ) : data?.deck?.cards.length == 0 ? (
+                data.deck.canEdit ? (
+                  <div>
+                    Your deck has no cards. Add cards to get started
+                    <span
+                      className="my-2 mx-3 cursor-pointer inline-flex justify-center px-4 py-2 text-sm font-medium text-purple-900 bg-purple-200 rounded-md hover:bg-purple-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-500"
+                      onClick={handleAddClick}
+                    >
+                      Add Cards
+                    </span>
+                  </div>
+                ) : (
+                  <div>This deck has no cards.</div>
+                )
+              ) : (
+                <>
+                  {data?.deck?.cards.map((card) => {
+                    return (
+                      <CardPreview
+                        id={card.id}
+                        question={card.question}
+                        answer={card.answer}
+                        key={card.number}
+                        number={card.number}
+                        canEdit={data.deck!.canEdit}
+                      />
+                    );
+                  })}
+                  {data?.deck?.canEdit ? (
+                    <span
+                      className="my-2 mx-3 cursor-pointer inline-flex justify-center px-4 py-2 text-sm font-medium text-purple-900 bg-purple-200 rounded-md hover:bg-purple-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-500"
+                      onClick={handleAddClick}
+                    >
+                      Add Cards
+                    </span>
+                  ) : null}
+                </>
+              )
+            ) : (
+              data?.deck?.learners.map((learner, index) => {
+                return <Learner username={learner.username} key={index} />;
+              })
+            )}
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

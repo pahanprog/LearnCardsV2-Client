@@ -5,6 +5,7 @@ query Deck($id: Float!) {
     }
     title
     description
+    canEdit
     learners {
       username
     }

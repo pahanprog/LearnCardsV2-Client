@@ -1,5 +1,7 @@
 import { useStartLearningMutation } from "../generated/graphql";
 import { useRouter } from "next/router";
+import React from "react";
+import { DeckPreviewContext } from "../pages/dashboard";
 
 interface DeckSearchPreviewProps {
   id: number;
@@ -23,14 +25,10 @@ const DeckSearchPreview: React.FC<DeckSearchPreviewProps> = ({
   learners,
 }) => {
   const [{}, startLearning] = useStartLearningMutation();
-
-  const router = useRouter();
-
   const handleClick = async () => {
     const deck = {
       id,
     };
-
     startLearning(deck);
     close();
   };

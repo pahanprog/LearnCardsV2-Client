@@ -24,7 +24,7 @@ const DeckSearchResult: React.FC<DeckSearchResultProps> = ({ title, back }) => {
               cards={deck.cards}
               learners={deck.learners}
               id={deck.id}
-              close={close}
+              close={() => close()}
               key={deck.id}
             />
           );

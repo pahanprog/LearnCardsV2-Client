@@ -30,6 +30,8 @@ const CardEditButton: React.FC<CardEditButtonProps> = ({
   }, [question, answer]);
 
   const openModal = () => {
+    setQuestionValue(question);
+    setAnswerValue(answer);
     setIsOpen(true);
   };
 

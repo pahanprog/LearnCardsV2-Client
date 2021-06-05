@@ -6,6 +6,7 @@ interface CardPreviewProps {
   question: string;
   answer: string;
   number: number;
+  canEdit: boolean;
 }
 
 export const CardPreview: React.FC<CardPreviewProps> = ({
@@ -13,6 +14,7 @@ export const CardPreview: React.FC<CardPreviewProps> = ({
   number,
   answer,
   question,
+  canEdit,
 }) => {
   return (
     <div className="w-full 2xl:w-3/4 2xl:mx-auto flex mb-4 first:mt-4">
@@ -24,7 +26,9 @@ export const CardPreview: React.FC<CardPreviewProps> = ({
         {answer}
       </div>
       <div className="flex flex-col justify-center items-center ml-3">
-        <CardEditButton id={id} answer={answer} question={question} />
+        {canEdit ? (
+          <CardEditButton id={id} answer={answer} question={question} />
+        ) : null}
         <select>
           <option value="unknown" defaultChecked>
             ...

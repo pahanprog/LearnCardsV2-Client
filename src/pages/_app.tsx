@@ -1,7 +1,7 @@
+import "../assets/css/tailwind.output.css";
 import { createClient } from "@urql/core";
 import type { AppProps } from "next/app";
 import { Provider } from "urql";
-import "../assets/css/tailwind.output.css";
 import { __prod__ } from "../constants";
 
 let client: any;
@@ -19,8 +19,10 @@ try {
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <Provider value={client}>
-      <Component {...pageProps} />
-    </Provider>
+    <>
+      <Provider value={client}>
+        <Component {...pageProps} />
+      </Provider>
+    </>
   );
 }

@@ -11,7 +11,7 @@ interface SideDeckProps {
   id: number;
   selected?: boolean;
   edit: boolean;
-  creator: string;
+  isLearner: boolean;
 }
 
 export const SideDeck: React.FC<SideDeckProps> = ({
@@ -20,7 +20,7 @@ export const SideDeck: React.FC<SideDeckProps> = ({
   title,
   selected,
   edit,
-  creator,
+  isLearner,
 }) => {
   const [{ data: me }] = useMeQuery();
   const router = useRouter();
@@ -34,7 +34,7 @@ export const SideDeck: React.FC<SideDeckProps> = ({
   return (
     <div
       onClick={handleClick}
-      className={`ml-1 mr-4 my-2 mb-4 relative group ${
+      className={`ml-1 mr-4 mt-2 mb-4 relative group ${
         selected ? "border-l-8 border-purple-300" : null
       }`}
     >
@@ -45,11 +45,7 @@ export const SideDeck: React.FC<SideDeckProps> = ({
         <div className="truncate text-base">{description}</div>
       </div>
       {edit ? (
-        creator == me?.me?.username ? (
-          <DeleteDeckButton id={id} title={title} />
-        ) : (
-          <DeleteDeckButton id={id} title={title} learning />
-        )
+        <DeleteDeckButton id={id} title={title} learning={isLearner} />
       ) : null}
     </div>
   );

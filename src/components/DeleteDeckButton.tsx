@@ -1,16 +1,15 @@
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Transition, Dialog } from "@headlessui/react";
+import { useRouter } from "next/router";
 import React, { Fragment, useState } from "react";
-import {
-  useDeleteDeckMutation,
-  useStopLearningMutation,
-} from "../generated/graphql";
+import { useDeleteDeckMutation } from "../generated/graphql";
+import { DeckPreviewContext } from "../pages/dashboard";
 
 interface DeleteDeckButtonProps {
   id: number;
   title: string;
-  learning?: boolean;
+  learning: boolean;
 }
 
 const DeleteDeckButton: React.FC<DeleteDeckButtonProps> = ({
@@ -19,8 +18,10 @@ const DeleteDeckButton: React.FC<DeleteDeckButtonProps> = ({
   learning,
 }) => {
   const [{ error, data }, deleteDeck] = useDeleteDeckMutation();
-  const [{}, stopLearning] = useStopLearningMutation();
   const [isOpen, setIsOpen] = useState(false);
+
+  const router = useRouter();
+  const { decks, setDecks } = React.useContext(DeckPreviewContext);
 
   const openModal = () => {
     setIsOpen(true);
@@ -30,17 +31,22 @@ const DeleteDeckButton: React.FC<DeleteDeckButtonProps> = ({
     setIsOpen(false);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     const deck = {
       id: id,
+      isLearner: learning,
     };
-    if (learning) {
-      stopLearning(deck);
-    } else {
-      deleteDeck(deck);
-    }
 
-    closeModal();
+    const result = await deleteDeck(deck);
+
+    if (result.data?.deleteDeck) {
+      const filtered = decks.filter((deck) => deck.id != id);
+      setDecks(filtered);
+      router.push(`/dashboard?deck=${filtered[0].id}`, undefined, {
+        shallow: true,
+      });
+      closeModal();
+    }
   };
 
   return (

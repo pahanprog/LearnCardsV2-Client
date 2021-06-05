@@ -7,6 +7,7 @@ interface InlineEditProps {
   value: string;
   changeState: Function;
   description?: boolean;
+  canEdit: boolean;
 }
 
 export const InlineEdit: React.FC<InlineEditProps> = ({
@@ -14,6 +15,7 @@ export const InlineEdit: React.FC<InlineEditProps> = ({
   value,
   changeState,
   description,
+  canEdit,
 }) => {
   const [valueCopy, setValueCopy] = useState(value);
 
@@ -65,14 +67,16 @@ export const InlineEdit: React.FC<InlineEditProps> = ({
           {value}
         </div>
       )}
-      <div
-        className={`ml-2 h-6 w-6 p-1 grid place-items-center transition-all opacity-0 group-hover:opacity-100 hover:bg-gray-200 cursor-pointer rounded-full group ${
-          edit ? "hidden" : null
-        }`}
-        onClick={() => changeState({ value: value, edit: true })}
-      >
-        <FontAwesomeIcon icon={faPen} size="sm" className="text-gray-700" />
-      </div>
+      {canEdit ? (
+        <div
+          className={`ml-2 h-6 w-6 p-1 grid place-items-center transition-all opacity-0 group-hover:opacity-100 hover:bg-gray-200 cursor-pointer rounded-full group ${
+            edit ? "hidden" : null
+          }`}
+          onClick={() => changeState({ value: value, edit: true })}
+        >
+          <FontAwesomeIcon icon={faPen} size="sm" className="text-gray-700" />
+        </div>
+      ) : null}
     </div>
   );
 };

@@ -1,9 +1,11 @@
 import { faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Transition, Dialog } from "@headlessui/react";
+import { useRouter } from "next/router";
+import result from "postcss/lib/result";
 import React, { Fragment, useState } from "react";
 import { useCreateDeckMutation } from "../generated/graphql";
-import Modal from "./Modal";
+import { DeckPreviewContext } from "../pages/dashboard";
 
 export default function CreateDeckBtn() {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,6 +14,9 @@ export default function CreateDeckBtn() {
   const [description, setDescription] = useState(String);
 
   const [{ data }, create] = useCreateDeckMutation();
+
+  const router = useRouter();
+  const { decks, setDecks } = React.useContext(DeckPreviewContext);
 
   const openModal = () => {
     setIsOpen(true);
@@ -23,19 +28,26 @@ export default function CreateDeckBtn() {
     setIsOpen(false);
   };
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     const deck = {
       title,
       description,
     };
 
-    create(deck);
+    const result = await create(deck);
+
+    if (result.data?.createDeck) {
+      setDecks([...decks, result.data.createDeck]);
+      router.push(`/dashboard?deck=${result.data.createDeck.id}`, undefined, {
+        shallow: true,
+      });
+    }
 
     closeModal();
   };
 
   return (
-    <div className="grid place-items-center">
+    <div className="mt-2 grid place-items-center">
       <div className="cursor-pointer flex items-center" onClick={openModal}>
         <FontAwesomeIcon icon={faPlus} size="1x" />
         <span className="ml-4"> Create a new deck</span>

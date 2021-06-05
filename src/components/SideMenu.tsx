@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { useDecksPreviewQuery, useMeQuery } from "../generated/graphql";
+import { Deck, useDecksPreviewQuery, useMeQuery } from "../generated/graphql";
 import { useIsAuth } from "../utils/useIsAuth";
 import CreateDeckBtn from "./CreateDeckBtn";
 import DashboardLink from "./DashboardLink";
 import { SideDeck } from "./SideDeck";
 import { useRouter } from "next/router";
+import { DeckPreview } from "../types";
+import { DeckPreviewContext } from "../pages/dashboard";
 
 interface SideMenuProps {
+  decks: DeckPreview[];
   deckId: number;
 }
 
@@ -21,8 +24,11 @@ const SideMenu: React.FC<SideMenuProps> = ({ deckId }) => {
 
   const router = useRouter();
 
+  const { decks, setDecks } = React.useContext(DeckPreviewContext);
+
   useEffect(() => {
     if (data?.decks?.length != 0 && data?.decks) {
+      setDecks(data.decks);
       router.replace(`/dashboard?deck=${data.decks[0].id}`, undefined, {
         shallow: true,
       });
@@ -56,8 +62,8 @@ const SideMenu: React.FC<SideMenuProps> = ({ deckId }) => {
         </div>
       </div>
       <div className="w-full overflow-auto">
-        {data?.decks
-          ? data.decks.map((deck) => {
+        {decks
+          ? decks.map((deck) => {
               if (deck.id == deckId) {
                 return (
                   <SideDeck
@@ -66,7 +72,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ deckId }) => {
                     id={deck.id}
                     key={deck.id}
                     edit={edit}
-                    creator={deck.creator.username}
+                    isLearner={deck.isLearner}
                     selected
                   />
                 );
@@ -77,8 +83,8 @@ const SideMenu: React.FC<SideMenuProps> = ({ deckId }) => {
                     description={deck.description}
                     id={deck.id}
                     key={deck.id}
+                    isLearner={deck.isLearner}
                     edit={edit}
-                    creator={deck.creator.username}
                   />
                 );
               }

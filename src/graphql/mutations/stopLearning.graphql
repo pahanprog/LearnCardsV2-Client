@@ -1,3 +1,0 @@
-mutation StopLearning($id: Float!) {
-  stopLearning(id: $id)
-}

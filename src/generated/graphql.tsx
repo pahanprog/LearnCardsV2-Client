@@ -14,22 +14,32 @@ export type Scalars = {
   Float: number;
 };
 
-export type Query = {
-  __typename?: 'Query';
-  decks?: Maybe<Array<Deck>>;
-  deck?: Maybe<Deck>;
-  deckSearch?: Maybe<Array<Deck>>;
-  me?: Maybe<User>;
+export type Card = {
+  __typename?: 'Card';
+  id: Scalars['Float'];
+  number: Scalars['Float'];
+  parentId: Scalars['Float'];
+  question: Scalars['String'];
+  answer: Scalars['String'];
 };
 
-
-export type QueryDeckArgs = {
-  deckId: Scalars['Float'];
+export type CardInput = {
+  id: Scalars['Float'];
+  question: Scalars['String'];
+  answer: Scalars['String'];
 };
 
+export type CardInputWithId = {
+  question: Scalars['String'];
+  answer: Scalars['String'];
+  number: Scalars['Float'];
+  id?: Maybe<Scalars['Float']>;
+};
 
-export type QueryDeckSearchArgs = {
-  title: Scalars['String'];
+export type ChangePasswordResponse = {
+  __typename?: 'ChangePasswordResponse';
+  errors?: Maybe<Array<FieldError>>;
+  changed?: Maybe<Scalars['Boolean']>;
 };
 
 export type Deck = {
@@ -43,24 +53,19 @@ export type Deck = {
   description: Scalars['String'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
+  canEdit: Scalars['Boolean'];
+  isLearner: Scalars['Boolean'];
 };
 
-export type Card = {
-  __typename?: 'Card';
-  id: Scalars['Float'];
-  number: Scalars['Float'];
-  parentId: Scalars['Float'];
-  question: Scalars['String'];
-  answer: Scalars['String'];
+export type DeckInput = {
+  title: Scalars['String'];
+  description: Scalars['String'];
 };
 
-export type User = {
-  __typename?: 'User';
-  id: Scalars['Float'];
-  createdAt: Scalars['String'];
-  updatedAt: Scalars['String'];
-  username: Scalars['String'];
-  email: Scalars['String'];
+export type FieldError = {
+  __typename?: 'FieldError';
+  field: Scalars['String'];
+  message: Scalars['String'];
 };
 
 export type Mutation = {
@@ -70,7 +75,6 @@ export type Mutation = {
   updateDeckCards?: Maybe<Deck>;
   deleteDeck: Scalars['Boolean'];
   startLearning?: Maybe<Deck>;
-  stopLearning: Scalars['Boolean'];
   register: UserResponse;
   login: UserResponse;
   forgotPassword: Scalars['Boolean'];
@@ -99,16 +103,12 @@ export type MutationUpdateDeckCardsArgs = {
 
 
 export type MutationDeleteDeckArgs = {
+  isLearner: Scalars['Boolean'];
   id: Scalars['Float'];
 };
 
 
 export type MutationStartLearningArgs = {
-  id: Scalars['Float'];
-};
-
-
-export type MutationStopLearningArgs = {
   id: Scalars['Float'];
 };
 
@@ -139,28 +139,22 @@ export type MutationUpdateCardArgs = {
   input: CardInput;
 };
 
-export type DeckInput = {
+export type Query = {
+  __typename?: 'Query';
+  decks?: Maybe<Array<Deck>>;
+  deck?: Maybe<Deck>;
+  deckSearch?: Maybe<Array<Deck>>;
+  me?: Maybe<User>;
+};
+
+
+export type QueryDeckArgs = {
+  deckId: Scalars['Float'];
+};
+
+
+export type QueryDeckSearchArgs = {
   title: Scalars['String'];
-  description: Scalars['String'];
-};
-
-export type CardInputWithId = {
-  question: Scalars['String'];
-  answer: Scalars['String'];
-  number: Scalars['Float'];
-  id?: Maybe<Scalars['Float']>;
-};
-
-export type UserResponse = {
-  __typename?: 'UserResponse';
-  errors?: Maybe<Array<FieldError>>;
-  user?: Maybe<User>;
-};
-
-export type FieldError = {
-  __typename?: 'FieldError';
-  field: Scalars['String'];
-  message: Scalars['String'];
 };
 
 export type RegisterInput = {
@@ -169,16 +163,19 @@ export type RegisterInput = {
   password: Scalars['String'];
 };
 
-export type ChangePasswordResponse = {
-  __typename?: 'ChangePasswordResponse';
-  errors?: Maybe<Array<FieldError>>;
-  changed?: Maybe<Scalars['Boolean']>;
+export type User = {
+  __typename?: 'User';
+  id: Scalars['Float'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
+  username: Scalars['String'];
+  email: Scalars['String'];
 };
 
-export type CardInput = {
-  id: Scalars['Float'];
-  question: Scalars['String'];
-  answer: Scalars['String'];
+export type UserResponse = {
+  __typename?: 'UserResponse';
+  errors?: Maybe<Array<FieldError>>;
+  user?: Maybe<User>;
 };
 
 export type ChangePasswordMutationVariables = Exact<{
@@ -199,6 +196,7 @@ export type CreateDeckMutation = { __typename?: 'Mutation', createDeck?: Maybe<{
 
 export type DeleteDeckMutationVariables = Exact<{
   id: Scalars['Float'];
+  isLearner: Scalars['Boolean'];
 }>;
 
 
@@ -240,13 +238,6 @@ export type StartLearningMutationVariables = Exact<{
 
 export type StartLearningMutation = { __typename?: 'Mutation', startLearning?: Maybe<{ __typename?: 'Deck', id: number, creatorId: number, learners: Array<{ __typename?: 'User', id: number, username: string }> }> };
 
-export type StopLearningMutationVariables = Exact<{
-  id: Scalars['Float'];
-}>;
-
-
-export type StopLearningMutation = { __typename?: 'Mutation', stopLearning: boolean };
-
 export type UpdateCardMutationVariables = Exact<{
   id: Scalars['Float'];
   question: Scalars['String'];
@@ -279,7 +270,7 @@ export type DeckQueryVariables = Exact<{
 }>;
 
 
-export type DeckQuery = { __typename?: 'Query', deck?: Maybe<{ __typename?: 'Deck', title: string, description: string, creator: { __typename?: 'User', username: string }, learners: Array<{ __typename?: 'User', username: string }>, cards: Array<{ __typename?: 'Card', id: number, number: number, question: string, answer: string }> }> };
+export type DeckQuery = { __typename?: 'Query', deck?: Maybe<{ __typename?: 'Deck', title: string, description: string, canEdit: boolean, creator: { __typename?: 'User', username: string }, learners: Array<{ __typename?: 'User', username: string }>, cards: Array<{ __typename?: 'Card', id: number, number: number, question: string, answer: string }> }> };
 
 export type DeckSearchQueryVariables = Exact<{
   title: Scalars['String'];
@@ -291,7 +282,7 @@ export type DeckSearchQuery = { __typename?: 'Query', deckSearch?: Maybe<Array<{
 export type DecksPreviewQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type DecksPreviewQuery = { __typename?: 'Query', decks?: Maybe<Array<{ __typename?: 'Deck', id: number, title: string, description: string, creator: { __typename?: 'User', username: string } }>> };
+export type DecksPreviewQuery = { __typename?: 'Query', decks?: Maybe<Array<{ __typename?: 'Deck', id: number, title: string, description: string, isLearner: boolean }>> };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -328,8 +319,8 @@ export function useCreateDeckMutation() {
   return Urql.useMutation<CreateDeckMutation, CreateDeckMutationVariables>(CreateDeckDocument);
 };
 export const DeleteDeckDocument = gql`
-    mutation DeleteDeck($id: Float!) {
-  deleteDeck(id: $id)
+    mutation DeleteDeck($id: Float!, $isLearner: Boolean!) {
+  deleteDeck(id: $id, isLearner: $isLearner)
 }
     `;
 
@@ -408,15 +399,6 @@ export const StartLearningDocument = gql`
 export function useStartLearningMutation() {
   return Urql.useMutation<StartLearningMutation, StartLearningMutationVariables>(StartLearningDocument);
 };
-export const StopLearningDocument = gql`
-    mutation StopLearning($id: Float!) {
-  stopLearning(id: $id)
-}
-    `;
-
-export function useStopLearningMutation() {
-  return Urql.useMutation<StopLearningMutation, StopLearningMutationVariables>(StopLearningDocument);
-};
 export const UpdateCardDocument = gql`
     mutation UpdateCard($id: Float!, $question: String!, $answer: String!) {
   updateCard(input: {id: $id, question: $question, answer: $answer}) {
@@ -469,6 +451,7 @@ export const DeckDocument = gql`
     }
     title
     description
+    canEdit
     learners {
       username
     }
@@ -515,9 +498,7 @@ export const DecksPreviewDocument = gql`
     id
     title
     description
-    creator {
-      username
-    }
+    isLearner
   }
 }
     `;
