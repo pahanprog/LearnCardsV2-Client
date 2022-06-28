@@ -12,7 +12,7 @@ import { SessionProvider } from "../context/SessionProvider";
 let client: any;
 
 axios.defaults.baseURL = __prod__
-  ? "https://alto-api-1.herokuapp.com"
+  ? "https://learncardsv2-api.herokuapp.com"
   : "http://localhost:5000";
 axios.defaults.withCredentials = true;
 axios.defaults.headers.common["Accept"] = "application/json";
