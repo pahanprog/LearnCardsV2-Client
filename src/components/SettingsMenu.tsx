@@ -1,9 +1,10 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCog } from "@fortawesome/free-solid-svg-icons";
 import { useLogoutMutation } from "../generated/graphql";
 import { useRouter } from "next/router";
+import useWindowDimensions from "../hooks/useWindowDimensions";
 
 const SettingsMenu = () => {
   const [{ data }, logout] = useLogoutMutation();
@@ -12,12 +13,17 @@ const SettingsMenu = () => {
   const handleLogout = async () => {
     const res = await logout();
     if (res.data?.logout) {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("user");
+      }
       router.push("/login");
     }
   };
 
+  const { height, width } = useWindowDimensions();
+
   return (
-    <Menu as="div" className="relative grid place-items-center ">
+    <Menu as="div" className="relative grid place-items-center z-20">
       <Menu.Button className="focus:outline-none">
         <div className="flex items-center">
           <FontAwesomeIcon icon={faCog} size="lg" />
@@ -35,16 +41,16 @@ const SettingsMenu = () => {
         <Menu.Items className="py-2 absolute right-0 top-10 w-56 origin-top-righti bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div className="grid place-items-center">
             <Menu.Item>
-              <button className="px-2 py-2 w-full hover:bg-gray-100">
-                Profile
+              <button className="text:xl px-2 py-2 w-full hover:bg-gray-100">
+                Профиль
               </button>
             </Menu.Item>
             <Menu.Item>
               <button
-                className="px-2 py-2 w-full hover:bg-gray-100"
+                className="text:xl px-2 py-2 w-full hover:bg-gray-100"
                 onClick={handleLogout}
               >
-                Logout
+                Выйти
               </button>
             </Menu.Item>
           </div>

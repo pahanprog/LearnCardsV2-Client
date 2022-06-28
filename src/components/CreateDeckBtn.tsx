@@ -1,47 +1,68 @@
-import { faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faSpinner, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Transition, Dialog } from "@headlessui/react";
+import { Form, Formik, FormikHelpers, FormikValues } from "formik";
 import { useRouter } from "next/router";
 import result from "postcss/lib/result";
 import React, { Fragment, useState } from "react";
 import { useCreateDeckMutation } from "../generated/graphql";
 import { DeckPreviewContext } from "../pages/dashboard";
+import * as yup from "yup";
+import { TextInput } from "./TextInput";
+import { Button } from "./Button";
+import { ResponsiveSideMenuContext } from "../context/ResponsiveSideMenuProvider";
+
+const createDeckSchema = yup.object().shape({
+  title: yup.string().trim().required("Поле, обязательное для заполнения"),
+  description: yup
+    .string()
+    .trim()
+    .required("Поле, обязательное для заполнения"),
+});
 
 export default function CreateDeckBtn() {
   const [isOpen, setIsOpen] = useState(false);
-
-  const [title, setTitle] = useState(String);
-  const [description, setDescription] = useState(String);
 
   const [{ data }, create] = useCreateDeckMutation();
 
   const router = useRouter();
   const { decks, setDecks } = React.useContext(DeckPreviewContext);
+  const { toggleMenu } = React.useContext(ResponsiveSideMenuContext);
+
+  const [loading, setLoading] = useState(false);
 
   const openModal = () => {
     setIsOpen(true);
+    toggleMenu();
   };
 
   const closeModal = () => {
-    setTitle("");
-    setDescription("");
     setIsOpen(false);
   };
 
-  const handleCreate = async () => {
+  const handleSubmit = async (
+    values: FormikValues,
+    helpers: FormikHelpers<{
+      title: string;
+      description: string;
+    }>
+  ) => {
+    setLoading(true);
     const deck = {
-      title,
-      description,
+      title: values.title,
+      description: values.description,
     };
+
+    await new Promise((r) => setTimeout(r, 2000));
 
     const result = await create(deck);
 
-    if (result.data?.createDeck) {
-      setDecks([...decks, result.data.createDeck]);
-      router.push(`/dashboard?deck=${result.data.createDeck.id}`, undefined, {
-        shallow: true,
-      });
-    }
+    // if (result.data?.createDeck) {
+    //   setDecks([...decks, result.data.createDeck]);
+    //   router.push(`/dashboard?deck=${result.data.createDeck.id}`, undefined, {
+    //     shallow: true,
+    //   });
+    // }
 
     closeModal();
   };
@@ -50,7 +71,7 @@ export default function CreateDeckBtn() {
     <div className="mt-2 grid place-items-center">
       <div className="cursor-pointer flex items-center" onClick={openModal}>
         <FontAwesomeIcon icon={faPlus} size="1x" />
-        <span className="ml-4"> Create a new deck</span>
+        <span className="ml-4">Создать новую колоду</span>
       </div>
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog
@@ -58,7 +79,7 @@ export default function CreateDeckBtn() {
           className="fixed inset-0 z-10 overflow-y-auto"
           onClose={closeModal}
         >
-          <div className="min-h-screen px-4 text-center">
+          <div className="min-h-screen md:px-4 px-2 text-center">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -85,60 +106,126 @@ export default function CreateDeckBtn() {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <div className="inline-block w-full max-w-md p-6 overflow-hidden text-left align-middle transition-all transform bg-white border border-gray-100 shadow-xl rounded-xl">
+              <div className="inline-block w-full max-w-md md:p-6 p-4 overflow-hidden text-left align-middle transition-all transform bg-white border border-gray-100 shadow-xl rounded-xl">
                 <Dialog.Title
                   as="h3"
                   className="text-xl text-center font-medium leading-6 text-gray-900"
                 >
-                  Create new deck
+                  Создать колоду
                 </Dialog.Title>
-                <div className="mt-4">
-                  <div className="px-8">
-                    <div>
-                      <label htmlFor="title" className="text-lg font-medium">
-                        Title
-                      </label>
-                      <input
-                        className="w-full border-2 border-gray-300 p-2 rounded-md mb-6 focus:outline-none"
-                        name="title"
-                        placeholder="Title"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="description"
-                        className="text-lg font-medium"
-                      >
-                        Description
-                      </label>
-                      <input
-                        className="w-full border-2 border-gray-300 p-2 rounded-md mb-6 focus:outline-none"
-                        placeholder="Description"
-                        name="description"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                      />
-                    </div>
-                    <div className="w-full flex justify-around">
-                      <button
-                        type="button"
-                        className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-200 rounded-md hover:bg-blue-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
-                        onClick={closeModal}
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="button"
-                        className="inline-flex justify-center px-4 py-2 text-sm font-medium text-purple-700 bg-purple-200 rounded-md hover:bg-purple-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
-                        onClick={handleCreate}
-                      >
-                        Create
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <Formik
+                  initialValues={{ title: "", description: "" }}
+                  validationSchema={createDeckSchema}
+                  onSubmit={handleSubmit}
+                >
+                  {({
+                    values,
+                    errors,
+                    touched,
+                    setFieldValue,
+                    setFieldTouched,
+                    submitForm,
+                    isValid,
+                    handleChange,
+                  }) => (
+                    <Form className="md:mt-4 mt-2">
+                      <div className="md:px-8 px-2">
+                        <TextInput
+                          label="Наименование"
+                          placeholder="Наименование"
+                          value={values.title}
+                          name="title"
+                          handleChange={(e) => {
+                            if (touched.title) {
+                              setFieldTouched("title", false);
+                            }
+                            setFieldValue("title", e.target.value);
+                          }}
+                          error={
+                            errors.title && touched.title
+                              ? `${errors.title}`
+                              : undefined
+                          }
+                          onBlur={() => {
+                            console.log("BLURED");
+                            setFieldTouched("title");
+                          }}
+                        />
+                        <TextInput
+                          label="Описание"
+                          placeholder="Описание"
+                          value={values.description}
+                          name="description"
+                          handleChange={(e) => {
+                            if (touched.description) {
+                              setFieldTouched("description", false);
+                            }
+                            setFieldValue("description", e.target.value);
+                          }}
+                          error={
+                            errors.description && touched.description
+                              ? `${errors.description}`
+                              : undefined
+                          }
+                          onBlur={() => {
+                            console.log("BLURED");
+                            setFieldTouched("description");
+                          }}
+                          style="mb-4"
+                          multiline
+                        />
+                        <div className="w-full flex justify-around">
+                          <Button
+                            title="Отменить"
+                            disabled={loading}
+                            changeColorWhenDisabled={false}
+                            onClick={closeModal}
+                            submit={false}
+                          />
+                          <Button
+                            title="Создать"
+                            disabled={
+                              loading
+                                ? true
+                                : (touched.title && errors.title) ||
+                                  (touched.description && errors.description)
+                                ? true
+                                : false
+                            }
+                            changeColorWhenDisabled={!loading}
+                            onClick={() => {
+                              if (!isValid) {
+                                if (errors.title || values.title === "") {
+                                  setFieldTouched("title");
+                                }
+                                if (
+                                  errors.description ||
+                                  values.description === ""
+                                ) {
+                                  setFieldTouched("description");
+                                }
+
+                                return;
+                              }
+                            }}
+                            icon={
+                              loading && (
+                                <div style={{ height: "24px" }}>
+                                  <FontAwesomeIcon
+                                    icon={faSpinner}
+                                    size="lg"
+                                    style={{ width: "24px", height: "24px" }}
+                                    className="animate-spin"
+                                  />
+                                </div>
+                              )
+                            }
+                          />
+                        </div>
+                      </div>
+                    </Form>
+                  )}
+                </Formik>
               </div>
             </Transition.Child>
           </div>

@@ -12,15 +12,19 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
+  DateTime: any;
 };
 
 export type Card = {
   __typename?: 'Card';
   id: Scalars['Float'];
-  number: Scalars['Float'];
-  parentId: Scalars['Float'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
+  order: Scalars['Float'];
   question: Scalars['String'];
   answer: Scalars['String'];
+  stats: Array<CardStats>;
 };
 
 export type CardInput = {
@@ -32,8 +36,19 @@ export type CardInput = {
 export type CardInputWithId = {
   question: Scalars['String'];
   answer: Scalars['String'];
-  number: Scalars['Float'];
+  order: Scalars['Float'];
   id?: Maybe<Scalars['Float']>;
+};
+
+export type CardStats = {
+  __typename?: 'CardStats';
+  id: Scalars['Float'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
+  difficulty: Scalars['Float'];
+  daysBetweenReviews: Scalars['Float'];
+  dateLastReviewed: Scalars['DateTime'];
+  lastPerformanceRating: Scalars['Float'];
 };
 
 export type ChangePasswordResponse = {
@@ -42,17 +57,18 @@ export type ChangePasswordResponse = {
   changed?: Maybe<Scalars['Boolean']>;
 };
 
+
 export type Deck = {
   __typename?: 'Deck';
   id: Scalars['Float'];
-  cards: Array<Card>;
-  creatorId: Scalars['Float'];
-  creator: User;
-  learners: Array<User>;
-  title: Scalars['String'];
-  description: Scalars['String'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
+  title: Scalars['String'];
+  description: Scalars['String'];
+  cards: Array<Card>;
+  sessions: Array<Session>;
+  creator: User;
+  learners: Array<User>;
   canEdit: Scalars['Boolean'];
   isLearner: Scalars['Boolean'];
 };
@@ -75,12 +91,12 @@ export type Mutation = {
   updateDeckCards?: Maybe<Deck>;
   deleteDeck: Scalars['Boolean'];
   startLearning?: Maybe<Deck>;
-  register: UserResponse;
-  login: UserResponse;
   forgotPassword: Scalars['Boolean'];
   changePassword: ChangePasswordResponse;
   logout: Scalars['Boolean'];
   updateCard?: Maybe<Card>;
+  calculateStats?: Maybe<CardStats>;
+  startLearningSession?: Maybe<Session>;
 };
 
 
@@ -113,17 +129,6 @@ export type MutationStartLearningArgs = {
 };
 
 
-export type MutationRegisterArgs = {
-  options: RegisterInput;
-};
-
-
-export type MutationLoginArgs = {
-  Password: Scalars['String'];
-  UsernameOrEmail: Scalars['String'];
-};
-
-
 export type MutationForgotPasswordArgs = {
   email: Scalars['String'];
 };
@@ -139,12 +144,26 @@ export type MutationUpdateCardArgs = {
   input: CardInput;
 };
 
+
+export type MutationCalculateStatsArgs = {
+  id: Scalars['Float'];
+  sessionId: Scalars['Float'];
+  performanceRating: Scalars['Float'];
+};
+
+
+export type MutationStartLearningSessionArgs = {
+  deckId: Scalars['Float'];
+};
+
 export type Query = {
   __typename?: 'Query';
   decks?: Maybe<Array<Deck>>;
   deck?: Maybe<Deck>;
   deckSearch?: Maybe<Array<Deck>>;
+  discover?: Maybe<Array<Deck>>;
   me?: Maybe<User>;
+  getCardFromSession?: Maybe<Card>;
 };
 
 
@@ -157,10 +176,21 @@ export type QueryDeckSearchArgs = {
   title: Scalars['String'];
 };
 
-export type RegisterInput = {
-  email: Scalars['String'];
-  username: Scalars['String'];
-  password: Scalars['String'];
+
+export type QueryGetCardFromSessionArgs = {
+  cardId: Scalars['Float'];
+  sessionId: Scalars['Float'];
+};
+
+export type Session = {
+  __typename?: 'Session';
+  id: Scalars['Float'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
+  finishedCards: Scalars['Float'];
+  deck: Deck;
+  cards: Array<Card>;
+  cardsNumber: Scalars['Float'];
 };
 
 export type User = {
@@ -170,13 +200,24 @@ export type User = {
   updatedAt: Scalars['String'];
   username: Scalars['String'];
   email: Scalars['String'];
+  deckStats: UserDeckStats;
 };
 
-export type UserResponse = {
-  __typename?: 'UserResponse';
-  errors?: Maybe<Array<FieldError>>;
-  user?: Maybe<User>;
+export type UserDeckStats = {
+  __typename?: 'UserDeckStats';
+  unique: Scalars['Float'];
+  overall: Scalars['Float'];
+  percent: Scalars['Float'];
 };
+
+export type CalculateStatsMutationVariables = Exact<{
+  cardId: Scalars['Float'];
+  performanceRating: Scalars['Float'];
+  sessionId: Scalars['Float'];
+}>;
+
+
+export type CalculateStatsMutation = { __typename?: 'Mutation', calculateStats?: Maybe<{ __typename?: 'CardStats', id: number, lastPerformanceRating: number }> };
 
 export type ChangePasswordMutationVariables = Exact<{
   newPassword: Scalars['String'];
@@ -192,7 +233,7 @@ export type CreateDeckMutationVariables = Exact<{
 }>;
 
 
-export type CreateDeckMutation = { __typename?: 'Mutation', createDeck?: Maybe<{ __typename?: 'Deck', id: number, title: string, description: string }> };
+export type CreateDeckMutation = { __typename?: 'Mutation', createDeck?: Maybe<{ __typename?: 'Deck', id: number, title: string, description: string, isLearner: boolean }> };
 
 export type DeleteDeckMutationVariables = Exact<{
   id: Scalars['Float'];
@@ -209,34 +250,24 @@ export type ForgotPasswordMutationVariables = Exact<{
 
 export type ForgotPasswordMutation = { __typename?: 'Mutation', forgotPassword: boolean };
 
-export type LoginMutationVariables = Exact<{
-  usernameOrEmail: Scalars['String'];
-  password: Scalars['String'];
-}>;
-
-
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', user?: Maybe<{ __typename?: 'User', id: number, username: string, email: string }>, errors?: Maybe<Array<{ __typename?: 'FieldError', field: string, message: string }>> } };
-
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
-
-export type RegisterMutationVariables = Exact<{
-  email: Scalars['String'];
-  username: Scalars['String'];
-  password: Scalars['String'];
-}>;
-
-
-export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', user?: Maybe<{ __typename?: 'User', id: number, username: string, email: string }>, errors?: Maybe<Array<{ __typename?: 'FieldError', field: string, message: string }>> } };
 
 export type StartLearningMutationVariables = Exact<{
   id: Scalars['Float'];
 }>;
 
 
-export type StartLearningMutation = { __typename?: 'Mutation', startLearning?: Maybe<{ __typename?: 'Deck', id: number, creatorId: number, learners: Array<{ __typename?: 'User', id: number, username: string }> }> };
+export type StartLearningMutation = { __typename?: 'Mutation', startLearning?: Maybe<{ __typename?: 'Deck', id: number, title: string, description: string, isLearner: boolean }> };
+
+export type StartLearningSessionMutationVariables = Exact<{
+  deckId: Scalars['Float'];
+}>;
+
+
+export type StartLearningSessionMutation = { __typename?: 'Mutation', startLearningSession?: Maybe<{ __typename?: 'Session', id: number, cardsNumber: number, cards: Array<{ __typename?: 'Card', id: number }> }> };
 
 export type UpdateCardMutationVariables = Exact<{
   id: Scalars['Float'];
@@ -254,7 +285,7 @@ export type UpdateDeckCardsMutationVariables = Exact<{
 }>;
 
 
-export type UpdateDeckCardsMutation = { __typename?: 'Mutation', updateDeckCards?: Maybe<{ __typename?: 'Deck', id: number, title: string, description: string, cards: Array<{ __typename?: 'Card', id: number, number: number, question: string, answer: string }> }> };
+export type UpdateDeckCardsMutation = { __typename?: 'Mutation', updateDeckCards?: Maybe<{ __typename?: 'Deck', id: number, title: string, description: string, cards: Array<{ __typename?: 'Card', id: number, order: number, question: string, answer: string }> }> };
 
 export type UpdateDeckInfoMutationVariables = Exact<{
   title: Scalars['String'];
@@ -270,19 +301,32 @@ export type DeckQueryVariables = Exact<{
 }>;
 
 
-export type DeckQuery = { __typename?: 'Query', deck?: Maybe<{ __typename?: 'Deck', title: string, description: string, canEdit: boolean, creator: { __typename?: 'User', username: string }, learners: Array<{ __typename?: 'User', username: string }>, cards: Array<{ __typename?: 'Card', id: number, number: number, question: string, answer: string }> }> };
+export type DeckQuery = { __typename?: 'Query', deck?: Maybe<{ __typename?: 'Deck', title: string, description: string, canEdit: boolean, creator: { __typename?: 'User', username: string }, learners: Array<{ __typename?: 'User', username: string, deckStats: { __typename?: 'UserDeckStats', unique: number, overall: number, percent: number } }>, cards: Array<{ __typename?: 'Card', id: number, order: number, question: string, answer: string }> }> };
 
 export type DeckSearchQueryVariables = Exact<{
   title: Scalars['String'];
 }>;
 
 
-export type DeckSearchQuery = { __typename?: 'Query', deckSearch?: Maybe<Array<{ __typename?: 'Deck', id: number, title: string, description: string, creator: { __typename?: 'User', username: string }, cards: Array<{ __typename?: 'Card', number: number, question: string, answer: string }>, learners: Array<{ __typename?: 'User', username: string }> }>> };
+export type DeckSearchQuery = { __typename?: 'Query', deckSearch?: Maybe<Array<{ __typename?: 'Deck', id: number, title: string, description: string, creator: { __typename?: 'User', username: string }, cards: Array<{ __typename?: 'Card', order: number, question: string, answer: string }>, learners: Array<{ __typename?: 'User', username: string }> }>> };
 
 export type DecksPreviewQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type DecksPreviewQuery = { __typename?: 'Query', decks?: Maybe<Array<{ __typename?: 'Deck', id: number, title: string, description: string, isLearner: boolean }>> };
+
+export type DiscoverQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type DiscoverQuery = { __typename?: 'Query', discover?: Maybe<Array<{ __typename?: 'Deck', id: number, title: string, description: string, creator: { __typename?: 'User', username: string }, cards: Array<{ __typename?: 'Card', id: number }>, learners: Array<{ __typename?: 'User', id: number }> }>> };
+
+export type GetCardFromSessionQueryVariables = Exact<{
+  sessionId: Scalars['Float'];
+  cardId: Scalars['Float'];
+}>;
+
+
+export type GetCardFromSessionQuery = { __typename?: 'Query', getCardFromSession?: Maybe<{ __typename?: 'Card', question: string, answer: string, stats: Array<{ __typename?: 'CardStats', lastPerformanceRating: number }> }> };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -290,6 +334,22 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 export type MeQuery = { __typename?: 'Query', me?: Maybe<{ __typename?: 'User', id: number, createdAt: string, updatedAt: string, username: string }> };
 
 
+export const CalculateStatsDocument = gql`
+    mutation CalculateStats($cardId: Float!, $performanceRating: Float!, $sessionId: Float!) {
+  calculateStats(
+    id: $cardId
+    performanceRating: $performanceRating
+    sessionId: $sessionId
+  ) {
+    id
+    lastPerformanceRating
+  }
+}
+    `;
+
+export function useCalculateStatsMutation() {
+  return Urql.useMutation<CalculateStatsMutation, CalculateStatsMutationVariables>(CalculateStatsDocument);
+};
 export const ChangePasswordDocument = gql`
     mutation ChangePassword($newPassword: String!, $token: String!) {
   changePassword(newPassword: $newPassword, token: $token) {
@@ -311,6 +371,7 @@ export const CreateDeckDocument = gql`
     id
     title
     description
+    isLearner
   }
 }
     `;
@@ -336,25 +397,6 @@ export const ForgotPasswordDocument = gql`
 export function useForgotPasswordMutation() {
   return Urql.useMutation<ForgotPasswordMutation, ForgotPasswordMutationVariables>(ForgotPasswordDocument);
 };
-export const LoginDocument = gql`
-    mutation Login($usernameOrEmail: String!, $password: String!) {
-  login(UsernameOrEmail: $usernameOrEmail, Password: $password) {
-    user {
-      id
-      username
-      email
-    }
-    errors {
-      field
-      message
-    }
-  }
-}
-    `;
-
-export function useLoginMutation() {
-  return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
-};
 export const LogoutDocument = gql`
     mutation Logout {
   logout
@@ -364,40 +406,34 @@ export const LogoutDocument = gql`
 export function useLogoutMutation() {
   return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument);
 };
-export const RegisterDocument = gql`
-    mutation Register($email: String!, $username: String!, $password: String!) {
-  register(options: {email: $email, username: $username, password: $password}) {
-    user {
-      id
-      username
-      email
-    }
-    errors {
-      field
-      message
-    }
-  }
-}
-    `;
-
-export function useRegisterMutation() {
-  return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
-};
 export const StartLearningDocument = gql`
     mutation StartLearning($id: Float!) {
   startLearning(id: $id) {
     id
-    creatorId
-    learners {
-      id
-      username
-    }
+    title
+    description
+    isLearner
   }
 }
     `;
 
 export function useStartLearningMutation() {
   return Urql.useMutation<StartLearningMutation, StartLearningMutationVariables>(StartLearningDocument);
+};
+export const StartLearningSessionDocument = gql`
+    mutation StartLearningSession($deckId: Float!) {
+  startLearningSession(deckId: $deckId) {
+    id
+    cards {
+      id
+    }
+    cardsNumber
+  }
+}
+    `;
+
+export function useStartLearningSessionMutation() {
+  return Urql.useMutation<StartLearningSessionMutation, StartLearningSessionMutationVariables>(StartLearningSessionDocument);
 };
 export const UpdateCardDocument = gql`
     mutation UpdateCard($id: Float!, $question: String!, $answer: String!) {
@@ -420,7 +456,7 @@ export const UpdateDeckCardsDocument = gql`
     description
     cards {
       id
-      number
+      order
       question
       answer
     }
@@ -454,10 +490,15 @@ export const DeckDocument = gql`
     canEdit
     learners {
       username
+      deckStats {
+        unique
+        overall
+        percent
+      }
     }
     cards {
       id
-      number
+      order
       question
       answer
     }
@@ -478,7 +519,7 @@ export const DeckSearchDocument = gql`
     title
     description
     cards {
-      number
+      order
       question
       answer
     }
@@ -505,6 +546,43 @@ export const DecksPreviewDocument = gql`
 
 export function useDecksPreviewQuery(options: Omit<Urql.UseQueryArgs<DecksPreviewQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<DecksPreviewQuery>({ query: DecksPreviewDocument, ...options });
+};
+export const DiscoverDocument = gql`
+    query Discover {
+  discover {
+    id
+    title
+    description
+    creator {
+      username
+    }
+    cards {
+      id
+    }
+    learners {
+      id
+    }
+  }
+}
+    `;
+
+export function useDiscoverQuery(options: Omit<Urql.UseQueryArgs<DiscoverQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<DiscoverQuery>({ query: DiscoverDocument, ...options });
+};
+export const GetCardFromSessionDocument = gql`
+    query GetCardFromSession($sessionId: Float!, $cardId: Float!) {
+  getCardFromSession(sessionId: $sessionId, cardId: $cardId) {
+    question
+    answer
+    stats {
+      lastPerformanceRating
+    }
+  }
+}
+    `;
+
+export function useGetCardFromSessionQuery(options: Omit<Urql.UseQueryArgs<GetCardFromSessionQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetCardFromSessionQuery>({ query: GetCardFromSessionDocument, ...options });
 };
 export const MeDocument = gql`
     query Me {

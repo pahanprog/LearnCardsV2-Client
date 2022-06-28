@@ -9,3 +9,7 @@ export type DeckPreview = {
   description: string;
   isLearner: boolean;
 };
+
+export type UserAuth = {
+  token: string;
+}

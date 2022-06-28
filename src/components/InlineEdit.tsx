@@ -1,6 +1,7 @@
 import { faPen, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
+import { Button } from "./Button";
 
 interface InlineEditProps {
   edit: boolean;
@@ -28,7 +29,7 @@ export const InlineEdit: React.FC<InlineEditProps> = ({
       {edit ? (
         <div
           className="w-full border-2 border-purple-400 rounded-md px-2
-        py-1 flex items-center"
+        py-1 flex items-center  flex-col md:flex-row"
         >
           {description ? (
             <textarea
@@ -43,23 +44,21 @@ export const InlineEdit: React.FC<InlineEditProps> = ({
               onChange={(e) => setValueCopy(e.target.value)}
             />
           )}
-          <div className="flex items-center">
+          <div className="flex items-center self-center mt-2 md:mt-2">
             <FontAwesomeIcon
               icon={faTimes}
               onClick={() => {
                 changeState({ value: value, edit: false });
                 setValueCopy(value);
               }}
-              className="cursor-pointer rounded-full hover:bg-gray-200"
+              className="cursor-pointer rounded-full hover:bg-gray-200 mr-2"
             />
-            <span
-              className="my-2 mx-3 cursor-pointer inline-flex justify-center px-4 py-2 text-sm font-medium text-purple-700 bg-purple-200 rounded-md hover:bg-purple-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-500"
+            <Button
+              title="Сохранить"
               onClick={() =>
                 changeState({ value: valueCopy, edit: false, update: true })
               }
-            >
-              Save
-            </span>
+            />
           </div>
         </div>
       ) : (

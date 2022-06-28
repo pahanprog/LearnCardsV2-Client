@@ -8,10 +8,15 @@ query Deck($id: Float!) {
     canEdit
     learners {
       username
+      deckStats {
+        unique
+        overall
+        percent
+      }
     }
     cards {
       id
-      number
+      order
       question
       answer
     }

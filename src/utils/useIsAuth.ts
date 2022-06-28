@@ -2,10 +2,13 @@ import { useEffect } from "react";
 import { useMeQuery } from "../generated/graphql";
 
 export const useIsAuth = () => {
-  const [{ data, fetching }] = useMeQuery();
+  const [{ data, fetching, error }] = useMeQuery();
   useEffect(() => {
     if (!fetching && !data?.me) {
       window.location.href = "/";
     }
-  }, [fetching, data]);
+    if (data?.me) {
+      console.log("ME ", data.me)
+    }
+  }, [data]);
 };

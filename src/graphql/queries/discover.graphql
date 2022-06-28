@@ -1,0 +1,16 @@
+query Discover {
+  discover {
+    id
+    title
+    description
+    creator {
+      username
+    }
+    cards {
+      id
+    }
+    learners {
+      id
+    }
+  }
+}

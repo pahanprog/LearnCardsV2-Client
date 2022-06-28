@@ -1,0 +1,9 @@
+mutation StartLearningSession($deckId: Float!) {
+  startLearningSession(deckId: $deckId) {
+    id
+    cards {
+      id
+    }
+    cardsNumber
+  }
+}

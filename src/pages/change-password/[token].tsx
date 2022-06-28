@@ -28,15 +28,16 @@ const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
   };
 
   return (
-    <div className="w-screen grid place-items-center">
+    <div className="w-screen grid place-items-center px-4">
+      <div className="text-2xl fonts-medium mb-6">Придумайте новый пароль</div>
       <form onSubmit={(e) => handleSubmit(e)}>
         <label className="font-medium" htmlFor="">
-          New password
+          Новый пароль
         </label>
         <input
           className="mt-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           type="password"
-          placeholder="New password"
+          placeholder="Новый пароль"
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
         />
@@ -46,7 +47,7 @@ const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
             type="submit"
             className="px-4 py-2 font-medium inline-flex justify-center text-purple-900 bg-purple-200 rounded-md hover:bg-purple-300 focus:focus:outline-none"
           >
-            Change password
+            Изменить пароль
           </button>
         </div>
       </form>

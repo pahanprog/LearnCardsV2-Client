@@ -5,13 +5,20 @@ import {
   faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useEffect, useState } from "react";
-import { useDeckQuery } from "../generated/graphql";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import {
+  useDeckQuery,
+  useMeQuery,
+  useStartLearningSessionMutation,
+} from "../generated/graphql";
 import { InlineEdit } from "./InlineEdit";
 import { useUpdateDeckInfoMutation } from "../generated/graphql";
 import { CardPreview } from "./CardPreview";
 import Learner from "./Learner";
 import CardEdit from "./CardEdit";
+import { userInfo } from "os";
+import { SessionContext } from "../context/SessionProvider";
+import { useRouter } from "next/router";
 
 interface DeckProps {
   id: number;
@@ -25,20 +32,44 @@ interface inlineState {
 
 const Deck: React.FC<DeckProps> = ({ id }) => {
   const [{}, update] = useUpdateDeckInfoMutation();
-  const [{ data, fetching }] = useDeckQuery({ variables: { id: id } });
+  const [{}, learn] = useStartLearningSessionMutation();
+  const [{ data, fetching }] = useDeckQuery({
+    variables: { id: id },
+    requestPolicy: "network-only",
+  });
+  const [{ data: meQ }] = useMeQuery();
+  const router = useRouter();
 
   const [bodyCards, setBodyCards] = useState(true);
   const [editCards, setEditCards] = useState(false);
 
+  const { setSessionId, currentCardId, setSessionCards, setCurrentCardId } =
+    useContext(SessionContext);
+
   const [title, setTitle] = useState<inlineState>({ value: "", edit: false });
   const [desc, setDesc] = useState<inlineState>({ value: "", edit: false });
-  const [creatorUsername, setCreatorUsername] = useState(String);
+  const [cards, setCards] = useState<
+    {
+      __typename?: "Card" | undefined;
+      id: number;
+      order: number;
+      question: string;
+      answer: string;
+    }[]
+  >([]);
+
+  // const flag = useRef(-1);
 
   useEffect(() => {
     if (data?.deck) {
+      // if (!title.value || flag.current !== id)
       setTitle({ ...title, value: data.deck.title });
+      // if (!desc.value || flag.current !== id)
       setDesc({ ...desc, value: data.deck.description });
-      setCreatorUsername(data.deck.creator.username);
+      // if (flag.current !== id) {
+      //   flag.current = id;
+      // }
+      setCards(data.deck.cards);
     }
     setEditCards(false);
     setBodyCards(true);
@@ -50,7 +81,7 @@ const Deck: React.FC<DeckProps> = ({ id }) => {
 
   const updateTitle = (obj: inlineState) => {
     if (obj.update) {
-      setTitle({ ...title, edit: obj.edit });
+      setTitle({ ...title, edit: obj.edit, value: obj.value });
       update({ id: id, title: obj.value, description: desc.value });
     } else {
       setTitle(obj);
@@ -59,7 +90,7 @@ const Deck: React.FC<DeckProps> = ({ id }) => {
 
   const updateDesc = (obj: inlineState) => {
     if (obj.update) {
-      setDesc({ ...desc, edit: obj.edit });
+      setDesc({ ...desc, edit: obj.edit, value: obj.value });
       update({ id: id, title: title.value, description: obj.value });
     } else {
       setDesc(obj);
@@ -70,26 +101,41 @@ const Deck: React.FC<DeckProps> = ({ id }) => {
     setEditCards(true);
   };
 
-  const handleEditDone = () => {
-    setEditCards(false);
+  const handleEditDone = (
+    newCards?: {
+      __typename?: "Card" | undefined;
+      id: number;
+      order: number;
+      question: string;
+      answer: string;
+    }[]
+  ) => {
+    if (!newCards) {
+      setEditCards(false);
+    } else {
+      setCards(newCards);
+      setEditCards(false);
+    }
   };
 
   return (
     <>
       {!data?.deck ? (
-        <div className="grid place-items-center">
+        <div className="grid place-items-center px-2">
           <div>
-            <div>You dont have a deck. Create one or find one.</div>
+            <div className="text-xl">
+              У вас еще нет колод. Создайте или найдите нужную вам колоду.
+            </div>
           </div>
         </div>
       ) : (
-        <div className="flex flex-col text-gray-800">
+        <div className="flex flex-col text-gray-800 flex-1 overflow-y-hidden">
           {fetching ? (
             <div className="grid place-items-center h-screen w-full">
               <FontAwesomeIcon icon={faSpinner} spin size="5x" />
             </div>
           ) : data?.deck ? (
-            <div className="p-8">
+            <div className="md:p-8 p-4">
               <InlineEdit
                 edit={title.edit}
                 value={title.value}
@@ -104,14 +150,35 @@ const Deck: React.FC<DeckProps> = ({ id }) => {
                 description
               />
               <div className="flex mb-3">
-                <div className="mr-2">Creator:</div>
-                <div className="text-purple-700">{creatorUsername}</div>
+                <div className="mr-2">Создатель:</div>
+                <div className="text-purple-700">
+                  {data.deck.creator.username}
+                </div>
               </div>
               <div className="flex justify-start">
                 <div className="flex">
                   <div
                     title="Learn"
                     className="w-8 h-8 bg-gray-300 grid place-items-center rounded-full cursor-pointer"
+                    onClick={async () => {
+                      const result = await learn({ deckId: id });
+
+                      if (result.data?.startLearningSession?.id) {
+                        setSessionId(result.data.startLearningSession.id);
+                        setSessionCards(
+                          result.data.startLearningSession.cards.map(
+                            (card) => card.id
+                          )
+                        );
+                        setCurrentCardId(
+                          result.data.startLearningSession.cards[0].id
+                        );
+                        router.replace(
+                          `/learn/${result.data.startLearningSession.cards[0].id}`,
+                          undefined
+                        );
+                      }
+                    }}
                   >
                     <FontAwesomeIcon icon={faPlay} />
                   </div>
@@ -132,57 +199,62 @@ const Deck: React.FC<DeckProps> = ({ id }) => {
             </div>
           ) : null}
           <div className="w-full displat-flex">
-            <ul className="list-none flex bg-gray-300 font-semibold">
+            <ul className="border-b-2 border-gray-500 list-none flex bg-gray-300 font-semibold">
               <li
-                className={`flex-1 grid place-items-center ${
-                  bodyCards ? "border-b-8" : "border-b-2"
-                }  border-gray-500 py-2 cursor-pointer`}
+                className={`flex-1 grid place-items-center border-b-4 ${
+                  bodyCards ? "border-gray-500" : "border-gray-300"
+                } py-2 cursor-pointer`}
                 onClick={() => setBodyCards(true)}
               >
-                <div>Cards ({data.deck.cards.length})</div>
+                <div>Карточек: ({cards.length})</div>
               </li>
               <li
-                className={`flex-1 grid place-items-center ${
-                  bodyCards ? "border-b-2" : "border-b-8"
-                }  border-gray-500 py-2 cursor-pointer`}
+                className={`flex-1 grid place-items-center border-b-4 ${
+                  bodyCards ? "border-gray-300" : "border-gray-500"
+                } py-2 cursor-pointer`}
                 onClick={() => setBodyCards(false)}
               >
-                <div>Learners ({data?.deck?.learners.length})</div>
+                <div>Студентов: ({data?.deck?.learners.length})</div>
               </li>
             </ul>
           </div>
-          <div className="p-3 overflow-auto flex-1">
+          <div className=" overflow-auto flex-1 overflow-y-auto">
             {bodyCards ? (
               editCards ? (
-                <CardEdit
-                  handleDone={handleEditDone}
-                  cards={data!.deck!.cards}
-                  deckId={id}
-                />
+                <div className="py-4">
+                  <CardEdit
+                    handleDone={handleEditDone}
+                    cards={cards}
+                    deckId={id}
+                  />
+                </div>
               ) : data?.deck?.cards.length == 0 ? (
                 data.deck.canEdit ? (
-                  <div>
-                    Your deck has no cards. Add cards to get started
+                  <>
+                    <div className="p-4 text-lg">
+                      В вашей колоде еще нет карточек. Добавьте карточки чтобы
+                      начать изучение.
+                    </div>
                     <span
-                      className="my-2 mx-3 cursor-pointer inline-flex justify-center px-4 py-2 text-sm font-medium text-purple-900 bg-purple-200 rounded-md hover:bg-purple-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-500"
+                      className="mt-2 mx-3 cursor-pointer inline-flex justify-center px-4 py-2 text-sm font-medium text-purple-900 bg-purple-200 rounded-md hover:bg-purple-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-500"
                       onClick={handleAddClick}
                     >
-                      Add Cards
+                      Добавить карточки
                     </span>
-                  </div>
+                  </>
                 ) : (
-                  <div>This deck has no cards.</div>
+                  <div>В этой колоде нет карточек </div>
                 )
               ) : (
-                <>
-                  {data?.deck?.cards.map((card) => {
+                <div className="p-4">
+                  {cards.map((card) => {
                     return (
                       <CardPreview
                         id={card.id}
                         question={card.question}
                         answer={card.answer}
-                        key={card.number}
-                        number={card.number}
+                        key={card.id}
+                        number={card.order}
                         canEdit={data.deck!.canEdit}
                       />
                     );
@@ -192,14 +264,22 @@ const Deck: React.FC<DeckProps> = ({ id }) => {
                       className="my-2 mx-3 cursor-pointer inline-flex justify-center px-4 py-2 text-sm font-medium text-purple-900 bg-purple-200 rounded-md hover:bg-purple-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-500"
                       onClick={handleAddClick}
                     >
-                      Add Cards
+                      Добавить карточки
                     </span>
                   ) : null}
-                </>
+                </div>
               )
             ) : (
               data?.deck?.learners.map((learner, index) => {
-                return <Learner username={learner.username} key={index} />;
+                return (
+                  <Learner
+                    username={learner.username}
+                    adnim={learner.username === data.deck?.creator.username}
+                    deckStats={learner.deckStats}
+                    me={learner.username === meQ?.me?.username}
+                    key={index}
+                  />
+                );
               })
             )}
           </div>

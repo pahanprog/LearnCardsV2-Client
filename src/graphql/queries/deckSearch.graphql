@@ -7,7 +7,7 @@ query DeckSearch($title: String!) {
     title
     description
     cards {
-      number
+      order
       question
       answer
     }

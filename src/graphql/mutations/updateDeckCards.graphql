@@ -9,7 +9,7 @@ mutation UpdateDeckCards(
     description
     cards {
       id
-      number
+      order
       question
       answer
     }

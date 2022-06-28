@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import DeleteDeckButton from "./DeleteDeckButton";
 import { useMeQuery } from "../generated/graphql";
+import { ResponsiveSideMenuContext } from "../context/ResponsiveSideMenuProvider";
 
 interface SideDeckProps {
   title: string;
@@ -24,17 +25,19 @@ export const SideDeck: React.FC<SideDeckProps> = ({
 }) => {
   const [{ data: me }] = useMeQuery();
   const router = useRouter();
+  const { toggleMenu } = useContext(ResponsiveSideMenuContext);
 
   const handleClick = () => {
     if (!selected) {
       router.push(`/dashboard?deck=${id}`, undefined, { shallow: true });
     }
+    toggleMenu();
   };
 
   return (
     <div
       onClick={handleClick}
-      className={`ml-1 mr-4 mt-2 mb-4 relative group ${
+      className={` mr-4 mt-2 mb-4 relative group ${
         selected ? "border-l-8 border-purple-300" : null
       }`}
     >

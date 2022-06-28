@@ -1,0 +1,14 @@
+mutation CalculateStats(
+  $cardId: Float!
+  $performanceRating: Float!
+  $sessionId: Float!
+) {
+  calculateStats(
+    id: $cardId
+    performanceRating: $performanceRating
+    sessionId: $sessionId
+  ) {
+    id
+    lastPerformanceRating
+  }
+}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Deck, useDecksPreviewQuery, useMeQuery } from "../generated/graphql";
 import { useIsAuth } from "../utils/useIsAuth";
 import CreateDeckBtn from "./CreateDeckBtn";
@@ -7,18 +7,21 @@ import { SideDeck } from "./SideDeck";
 import { useRouter } from "next/router";
 import { DeckPreview } from "../types";
 import { DeckPreviewContext } from "../pages/dashboard";
+import { Button } from "./Button";
+import useWindowDimensions from "../hooks/useWindowDimensions";
+import { ResponsiveSideMenuContext } from "../context/ResponsiveSideMenuProvider";
 
 interface SideMenuProps {
   decks: DeckPreview[];
   deckId: number;
+  hidden?: boolean;
 }
 
 const SideMenu: React.FC<SideMenuProps> = ({ deckId }) => {
-  useIsAuth();
-
   const [{ data: me }] = useMeQuery();
 
   const [{ data }] = useDecksPreviewQuery();
+  const { menuOpen, toggleMenu } = useContext(ResponsiveSideMenuContext);
 
   const [edit, setEdit] = useState(false);
 
@@ -27,44 +30,85 @@ const SideMenu: React.FC<SideMenuProps> = ({ deckId }) => {
   const { decks, setDecks } = React.useContext(DeckPreviewContext);
 
   useEffect(() => {
+    console.log("DATA CHANGED ", data);
     if (data?.decks?.length != 0 && data?.decks) {
       setDecks(data.decks);
-      router.replace(`/dashboard?deck=${data.decks[0].id}`, undefined, {
-        shallow: true,
-      });
+      if (data.decks[0] && data.decks[0].id) {
+        router.replace(`/dashboard?deck=${data.decks[0].id}`, undefined, {
+          shallow: true,
+        });
+      } else {
+        router.replace(`/dashboard`, undefined, { shallow: true });
+      }
+    } else if (data?.decks?.length === 0) {
+      router.replace(`/dashboard`, undefined, { shallow: true });
+      setDecks([]);
     }
   }, [data]);
 
+  const { height, width } = useWindowDimensions();
+
+  // useEffect(() => {
+  //   if (width >= 768 && !menuOpen) {
+  //     toggleMenu();
+  //   }
+  // }, [width]);
+
   return (
-    <div className="max-w-xs w-full h-screen bg-gray-100 flex flex-col text-gray-600 text-xl">
+    <div
+      style={
+        width < 768
+          ? {
+              transform: menuOpen ? "translateX(0)" : "translateX(-100%)",
+              transition: "all 300ms",
+              zIndex: 1000,
+            }
+          : { transform: "translateX(0)" }
+      }
+      className="absolute md:relative max-w-xs w-full h-screen bg-gray-100 flex flex-col text-gray-600 text-xl translate-x-full"
+    >
       <header className="flex justify-between items-center p-4 pb-0">
-        <div
-          className="text-3xl font-semibold cursor-pointer text-gray-800"
-          onClick={() => {
-            window.location.href = "/";
-          }}
-        >
-          Learn Cards
+        <div className="flex flex-row w-full items-center">
+          <div
+            className="md:hidden mr-auto p-2"
+            onClick={() => {
+              toggleMenu();
+            }}
+          >
+            <div
+              style={{ transform: "rotate(45deg) translateY(4px)" }}
+              className="w-6 bg-black h-0.5 rounded"
+            />
+            <div
+              style={{ transform: "rotate(-45deg) translateY(-4px)" }}
+              className="w-6 bg-black h-0.5 rounded mt-1"
+            />
+          </div>
+          <div
+            className="ml-auto md:ml-0 text-3xl font-semibold cursor-pointer text-gray-800"
+            onClick={() => {
+              window.location.href = "/";
+            }}
+          >
+            Learn Cards
+          </div>
         </div>
       </header>
-      <div className="w-full flex flex-col justify-between p-4 border-b mt-3">
-        <div className="">
-          <DashboardLink type="Discover" />
-          <DashboardLink type="Stats" />
-        </div>
+      <div className="w-full flex flex-col pt-4 pb-4 border-b mt-3">
+        <DashboardLink type="Поиск колод" />
+        <DashboardLink type="Актуальные колоды" />
+        <DashboardLink type="Общая статистика" />
       </div>
       <div className="w-full flex justify-between items-center border-b p-4">
-        <div>Decks</div>
+        <div>Колоды</div>
         <div>
-          <div className="cursor-pointer" onClick={() => setEdit(!edit)}>
-            Edit
-          </div>
+          <Button type="s" title="Изменить" onClick={() => setEdit(!edit)} />
         </div>
       </div>
       <div className="w-full overflow-auto">
         {decks
           ? decks.map((deck) => {
-              if (deck.id == deckId) {
+              if (deck !== null) {
                 return (
                   <SideDeck
                     title={deck.title}
@@ -73,18 +117,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ deckId }) => {
                     key={deck.id}
                     edit={edit}
                     isLearner={deck.isLearner}
-                    selected
-                  />
-                );
-              } else {
-                return (
-                  <SideDeck
-                    title={deck.title}
-                    description={deck.description}
-                    id={deck.id}
-                    key={deck.id}
-                    isLearner={deck.isLearner}
-                    edit={edit}
+                    selected={deck.id == deckId}
                   />
                 );
               }
@@ -94,6 +127,10 @@ const SideMenu: React.FC<SideMenuProps> = ({ deckId }) => {
       </div>
     </div>
   );
+};
+
+SideMenu.defaultProps = {
+  hidden: false,
 };
 
 export default SideMenu;

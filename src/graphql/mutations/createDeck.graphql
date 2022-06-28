@@ -3,5 +3,6 @@ mutation CreateDeck($title: String!, $description: String!) {
     id
     title
     description
+    isLearner
   }
 }
