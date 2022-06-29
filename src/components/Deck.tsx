@@ -117,6 +117,12 @@ const Deck: React.FC<DeckProps> = ({ id }) => {
     setEditCards(false);
   };
 
+  useEffect(() => {
+    setSessionId(0);
+    setCurrentCardId(0);
+    setSessionCards([]);
+  }, []);
+
   return (
     <>
       {!data?.deck ? (
@@ -172,7 +178,7 @@ const Deck: React.FC<DeckProps> = ({ id }) => {
                         setCurrentCardId(
                           result.data.startLearningSession.cards[0].id
                         );
-                        router.replace(
+                        router.push(
                           `/learn/${result.data.startLearningSession.cards[0].id}`,
                           undefined
                         );

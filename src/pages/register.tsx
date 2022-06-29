@@ -82,7 +82,7 @@ export default function register() {
         JSON.stringify({ token: result.data.token })
       );
     }
-    router.push(`/dashboard`);
+    router.push(`/dashboard`, "", {});
   };
 
   return (

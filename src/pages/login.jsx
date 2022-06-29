@@ -69,7 +69,7 @@ export default function login() {
         JSON.stringify({ token: result.data.token })
       );
     }
-    router.push(`/dashboard`)
+    router.push(`/dashboard`,"",{})
   };
 
   return (

@@ -24,7 +24,7 @@ export default function search() {
   return (
     <div className="w-full h-full flex flex-col">
       <Header showLogo />
-      <div className="flex-1 bg-gray-100 flex flex-col overflow-scroll">
+      <div className="flex-1 bg-gray-100 flex flex-col overflow-y-scroll">
         <div>
           <Formik initialValues={{ keyWords: "" }} onSubmit={() => {}}>
             {({
@@ -61,7 +61,7 @@ export default function search() {
                     onBlur={() => {}}
                     showLabel={false}
                     showBorder={false}
-                    style="none"
+                    style="w-full"
                   />
                 </div>
               </Form>

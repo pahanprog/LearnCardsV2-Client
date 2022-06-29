@@ -23,7 +23,7 @@ export default function discover() {
   return (
     <div className="w-full h-full flex flex-col">
       <Header showLogo />
-      <div className="flex-1 bg-gray-100 flex flex-col overflow-scroll">
+      <div className="flex-1 bg-gray-100 flex flex-col overflow-y-scroll">
         <div className="flex-1 p-6 ">
           <div className="text-center text-2xl mb-6">Актуальный колоды</div>
           {data?.discover?.map((deck) => {

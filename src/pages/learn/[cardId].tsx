@@ -1,20 +1,26 @@
 import { NextPage } from "next";
+import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
 import { SessionContext } from "../../context/SessionProvider";
 import { useGetCardFromSessionQuery } from "../../generated/graphql";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 
-const Learn: NextPage<{ cardId: string }> = ({ cardId }) => {
+const Learn: NextPage<{ cardId: string }> = ({ cardId }: any) => {
   const { sessionId, savePerformanceRating, currentCardId } =
     useContext(SessionContext);
   const [{ data, fetching, error }] = useGetCardFromSessionQuery({
     requestPolicy: "network-only",
     variables: { cardId: parseInt(cardId), sessionId },
   });
+  const router = useRouter();
 
   const [flipped, setFlipped] = useState(false);
 
   const { height, width } = useWindowDimensions();
+
+  if (sessionId === 0) {
+    router.replace("/dashboard");
+  }
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center relative overflow-hidden bg-gray-100 overflow-scroll">
@@ -165,7 +171,7 @@ const Learn: NextPage<{ cardId: string }> = ({ cardId }) => {
   );
 };
 
-Learn.getInitialProps = ({ query }) => {
+Learn.getInitialProps = ({ query }: any) => {
   console.log("QUERY ", query);
   return {
     cardId: query.cardId as string,

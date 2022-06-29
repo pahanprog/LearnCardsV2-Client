@@ -54,18 +54,24 @@ const SideMenu: React.FC<SideMenuProps> = ({ deckId }) => {
   //   }
   // }, [width]);
 
+  const [styles, setStyles] = useState<React.CSSProperties>({});
+
+  useEffect(() => {
+    if (width < 768) {
+      setStyles({
+        transform: menuOpen ? "translateX(0)" : "translateX(-100%)",
+        transition: "all 300ms",
+        zIndex: 1000,
+      });
+    } else {
+      setStyles({ transform: "translateX(0)" });
+    }
+  }, [width, menuOpen]);
+
   return (
     <div
-      style={
-        width < 768
-          ? {
-              transform: menuOpen ? "translateX(0)" : "translateX(-100%)",
-              transition: "all 300ms",
-              zIndex: 1000,
-            }
-          : { transform: "translateX(0)" }
-      }
-      className="absolute md:relative max-w-xs w-full h-full bg-gray-100 flex flex-col text-gray-600 text-xl translate-x-full"
+      style={styles}
+      className="transition-transform absolute md:relative max-w-xs w-full h-full bg-gray-100 flex flex-col text-gray-600 text-xl translate-x-full"
     >
       <header className="flex justify-between items-center p-4 pb-0">
         <div className="flex flex-row w-full items-center">

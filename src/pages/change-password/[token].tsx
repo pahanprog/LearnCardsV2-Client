@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { FormEvent, useState } from "react";
 import { useChangePasswordMutation } from "../../generated/graphql";
 
-const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
+const ChangePassword: NextPage<{ token: string }> = ({ token }: any) => {
   const [newPassword, setNewPassword] = useState(String);
   const [error, setError] = useState(String);
 
@@ -55,7 +55,7 @@ const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
   );
 };
 
-ChangePassword.getInitialProps = ({ query }) => {
+ChangePassword.getInitialProps = ({ query }: any) => {
   return {
     token: query.token as string,
   };
