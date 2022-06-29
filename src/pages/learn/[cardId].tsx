@@ -46,7 +46,7 @@ const Learn: NextPage<{ cardId: string }> = ({ cardId }: any) => {
           >
             <div className="w-full h-full relative grid place-items-center">
               <div className="absolute text-md left-4 top-4 ">Вопрос</div>
-              <div className="md:text-2xl text-xl">
+              <div className="md:text-2xl text-xl px-4 text-center">
                 {data?.getCardFromSession?.question}
               </div>
             </div>
@@ -60,7 +60,9 @@ const Learn: NextPage<{ cardId: string }> = ({ cardId }: any) => {
           >
             <div className="w-full h-full relative grid place-items-center">
               <div className="absolute text-md left-4 top-4">Ответ</div>
-              <div className="text-2xl">{data?.getCardFromSession?.answer}</div>
+              <div className="md:text-2xl text-xl px-4 text-center">
+                {data?.getCardFromSession?.answer}
+              </div>
             </div>
           </div>
         </div>

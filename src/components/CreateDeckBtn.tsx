@@ -38,6 +38,7 @@ export default function CreateDeckBtn() {
 
   const closeModal = () => {
     setIsOpen(false);
+    setLoading(false);
   };
 
   const handleSubmit = async (

@@ -51,20 +51,20 @@ const Header: React.FC<HeaderProps> = ({ showLogo, index }) => {
           <>
             {data?.me?.id ? (
               <Link href={"/dashboard"}>
-                <div className="px-2 py-1 rounded bg-green-200 mr-2 text-sm font-medium">
+                <div className="px-2 py-1 rounded bg-green-200 mr-2 text-sm font-medium cursor-pointer">
                   Главная страница
                 </div>
               </Link>
             ) : (
               <div className="flex flex-row items-center">
                 <Link href={"/login"}>
-                  <div className="px-2 py-1 rounded bg-green-200 mr-2 text-sm font-medium">
+                  <div className="px-2 py-1 rounded bg-green-200 mr-2 text-sm font-medium cursor-pointer">
                     Войти
                   </div>
                 </Link>
 
                 <Link href={"/register"}>
-                  <div className="px-2 py-1 rounded bg-green-200 text-sm font-medium">
+                  <div className="px-2 py-1 rounded bg-green-200 text-sm font-medium cursor-pointer">
                     Зарегистрироваться
                   </div>
                 </Link>

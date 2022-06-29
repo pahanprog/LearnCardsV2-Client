@@ -4,10 +4,7 @@ import Link from "next/link";
 import React from "react";
 import { useState } from "react";
 import axios from "axios";
-import {
-  Form,
-  Formik,
-} from "formik";
+import { Form, Formik } from "formik";
 import * as yup from "yup";
 import { TextInput } from "../components/TextInput";
 import { Button } from "../components/Button";
@@ -28,10 +25,7 @@ export default function login() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (
-    values,
-    helpers
-  ) => {
+  const handleSubmit = async (values, helpers) => {
     setLoading(true);
     console.log("VALUES ", values);
 
@@ -69,7 +63,10 @@ export default function login() {
         JSON.stringify({ token: result.data.token })
       );
     }
-    router.push(`/dashboard`,"",{})
+    
+    setTimeout(() => {
+      router.push(`/dashboard`, "", {});
+    }, 500);
   };
 
   return (
@@ -209,9 +206,14 @@ export default function login() {
           <div className="absolute text-sm py-1 px-2 bg-gray-100">или</div>
         </div>
         <div className="w-2/3 shadow mx-auto self-center flex justify-center items-center py-1 bg-white">
-          <div style={{width: 26, height:26}} className="mr-4">
+          <div style={{ width: 26, height: 26 }} className="mr-4">
             {/* <Image src={mypic} width={26} height={26}/> */}
-            <img src="https://staffordonline.org/wp-content/uploads/2019/01/Google.jpg" alt="" width={26} height={26} />
+            <img
+              src="https://staffordonline.org/wp-content/uploads/2019/01/Google.jpg"
+              alt=""
+              width={26}
+              height={26}
+            />
           </div>
           <div className="font-medium">Войти с Google</div>
         </div>
