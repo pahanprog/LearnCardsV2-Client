@@ -62,7 +62,9 @@ const addAuthToOperation = ({ authState, operation }: any) => {
 
 try {
   client = createClient({
-    url: "http://localhost:5000/graphql",
+    url: __prod__
+      ? "https://learncardsv2-api.herokuapp.com/graphql"
+      : "http://localhost:5000/graphql",
     fetchOptions: {
       credentials: "include",
     },
