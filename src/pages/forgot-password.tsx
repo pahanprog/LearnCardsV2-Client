@@ -17,7 +17,7 @@ function ForgotPassword() {
     }
   };
   return (
-    <div className="w-screen grid place-items-center  px-4">
+    <div className="w-full grid place-items-center  px-4">
       <div className="text-2xl fonts-medium mb-2">Восстановление пароля</div>
       <div className="text-md fonts-medium mb-6 md:w-1/2 w-full text-center">
         Для восстановления пароля введите свой адрес электронной почты, мы

@@ -28,7 +28,7 @@ const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
   };
 
   return (
-    <div className="w-screen grid place-items-center px-4">
+    <div className="w-full grid place-items-center px-4">
       <div className="text-2xl fonts-medium mb-6">Придумайте новый пароль</div>
       <form onSubmit={(e) => handleSubmit(e)}>
         <label className="font-medium" htmlFor="">

@@ -4,7 +4,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { ResponsiveSideMenuContext } from "../context/ResponsiveSideMenuProvider";
 import { useMeQuery } from "../generated/graphql";
 import { Button } from "./Button";
-import DeckSearch from "./DeckSearch";
 import SettingsMenu from "./SettingsMenu";
 
 interface HeaderProps {
@@ -13,7 +12,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ showLogo, index }) => {
-  const [{ data }] = useMeQuery();
+  const [{ data }] = useMeQuery({ requestPolicy: "network-only" });
   const router = useRouter();
 
   const { toggleMenu } = useContext(ResponsiveSideMenuContext);

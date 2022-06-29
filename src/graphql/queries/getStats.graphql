@@ -1,0 +1,38 @@
+query GetStats {
+  getStats {
+    overallCards
+    learnedCards
+    createdDecks
+    studentsInCreatedDecks
+    overallLearnedPercent
+    learnedPercent
+    createdDecksArray {
+      id
+      title
+      description
+      creator {
+        username
+      }
+      cards {
+        id
+      }
+      learners {
+        id
+      }
+    }
+    learningDecksArray {
+      id
+      title
+      description
+      creator {
+        username
+      }
+      cards {
+        id
+      }
+      learners {
+        id
+      }
+    }
+  }
+}

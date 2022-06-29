@@ -50,7 +50,7 @@ export default function dashboard() {
       >
         <div className="flex">
           <SideMenu deckId={deckId} decks={deckPreviews} />
-          <div className="bg-white flex-1 grid grid-rows-auto-1 py-2 md:py-4 flex flex-col overflow-y-hidden h-screen">
+          <div className="bg-white flex-1 grid grid-rows-auto-1 py-2 md:py-4 flex flex-col overflow-y-hidden h-full">
             <Header />
             <DeckComponent id={deckId} />
           </div>

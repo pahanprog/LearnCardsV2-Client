@@ -53,8 +53,6 @@ export default function CreateDeckBtn() {
       description: values.description,
     };
 
-    await new Promise((r) => setTimeout(r, 2000));
-
     const result = await create(deck);
 
     // if (result.data?.createDeck) {
@@ -79,7 +77,7 @@ export default function CreateDeckBtn() {
           className="fixed inset-0 z-10 overflow-y-auto"
           onClose={closeModal}
         >
-          <div className="min-h-screen md:px-4 px-2 text-center">
+          <div className="min-h-full md:px-4 px-2 text-center">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -92,7 +90,7 @@ export default function CreateDeckBtn() {
               <Dialog.Overlay className="fixed inset-0 bg-gray-400 bg-opacity-30" />
             </Transition.Child>
             <span
-              className="inline-block h-screen align-middle"
+              className="inline-block h-full align-middle"
               aria-hidden="true"
             >
               &#8203;

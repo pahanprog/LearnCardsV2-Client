@@ -11,6 +11,7 @@ import {
 import * as yup from "yup";
 import { TextInput } from "../components/TextInput";
 import { Button } from "../components/Button";
+import { useRouter } from "next/router";
 
 const loginSchema = yup.object().shape({
   usernameOrEmail: yup
@@ -25,6 +26,7 @@ const loginSchema = yup.object().shape({
 
 export default function login() {
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (
     values,
@@ -43,8 +45,6 @@ export default function login() {
       url: "/auth/login",
       data: JSON.stringify(user),
     });
-
-    await new Promise((r) => setTimeout(r, 2000));
 
     if (result.data.errors) {
       result.data.errors.forEach((error) => {
@@ -69,11 +69,11 @@ export default function login() {
         JSON.stringify({ token: result.data.token })
       );
     }
-    window.location.href = "/dashboard";
+    router.push(`/dashboard`)
   };
 
   return (
-    <div className="w-screen h-screen grid place-items-center relative overflow-hidden bg-gray-100">
+    <div className="w-full h-full grid place-items-center relative overflow-hidden bg-gray-100">
       <div className="w-full md:max-w-md sm: px-2">
         <div className="w-full bg-white shadow-lg z-10 md:rounded-lg md:p-6 rounded p-2">
           <div className="w-full grid place-items-center md:mb-4 mb-2">

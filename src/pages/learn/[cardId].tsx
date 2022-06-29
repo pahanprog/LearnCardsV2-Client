@@ -17,7 +17,7 @@ const Learn: NextPage<{ cardId: string }> = ({ cardId }) => {
   const { height, width } = useWindowDimensions();
 
   return (
-    <div className="w-screen h-screen flex flex-col justify-center items-center relative overflow-hidden bg-gray-100">
+    <div className="w-full h-full flex flex-col justify-center items-center relative overflow-hidden bg-gray-100 overflow-scroll">
       <div
         className="w-11/12 h-4/6 mb-4 cursor-pointer"
         onClick={() => {

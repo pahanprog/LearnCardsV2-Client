@@ -102,20 +102,19 @@ const Deck: React.FC<DeckProps> = ({ id }) => {
   };
 
   const handleEditDone = (
-    newCards?: {
+    newCards: {
       __typename?: "Card" | undefined;
       id: number;
       order: number;
       question: string;
       answer: string;
-    }[]
+    }[],
+    update: boolean
   ) => {
-    if (!newCards) {
-      setEditCards(false);
-    } else {
+    if (update) {
       setCards(newCards);
-      setEditCards(false);
     }
+    setEditCards(false);
   };
 
   return (
@@ -131,7 +130,7 @@ const Deck: React.FC<DeckProps> = ({ id }) => {
       ) : (
         <div className="flex flex-col text-gray-800 flex-1 overflow-y-hidden">
           {fetching ? (
-            <div className="grid place-items-center h-screen w-full">
+            <div className="grid place-items-center h-full w-full">
               <FontAwesomeIcon icon={faSpinner} spin size="5x" />
             </div>
           ) : data?.deck ? (
@@ -228,7 +227,7 @@ const Deck: React.FC<DeckProps> = ({ id }) => {
                     deckId={id}
                   />
                 </div>
-              ) : data?.deck?.cards.length == 0 ? (
+              ) : cards.length == 0 ? (
                 data.deck.canEdit ? (
                   <>
                     <div className="p-4 text-lg">

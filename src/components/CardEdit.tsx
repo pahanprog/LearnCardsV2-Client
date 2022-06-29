@@ -13,13 +13,14 @@ import { Button } from "./Button";
 
 interface CardEditProps {
   handleDone: (
-    newCards?: {
+    newCards: {
       __typename?: "Card" | undefined;
       id: number;
       order: number;
       question: string;
       answer: string;
-    }[]
+    }[],
+    update: boolean
   ) => void;
   deckId: number;
   cards: { id?: number; order: number; question: string; answer: string }[];
@@ -105,7 +106,7 @@ const CardEdit: React.FC<CardEditProps> = ({ handleDone, cards, deckId }) => {
     }
 
     if (result.data?.updateDeckCards?.cards) {
-      handleDone(result.data.updateDeckCards.cards);
+      handleDone(result.data.updateDeckCards.cards, true);
     }
   };
 
@@ -206,7 +207,7 @@ const CardEdit: React.FC<CardEditProps> = ({ handleDone, cards, deckId }) => {
             title="Отменить"
             disabled={loading}
             changeColorWhenDisabled={false}
-            onClick={() => handleDone()}
+            onClick={() => handleDone([], false)}
             submit={false}
           />
           <div className="ml-4">

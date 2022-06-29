@@ -4,7 +4,7 @@ import Header from "../components/Header";
 
 export default function index() {
   return (
-    <div className="flex flex-col w-screen h-screen">
+    <div className="flex flex-col w-full h-full">
       <Header showLogo={true} index />
       <div className="w-full h-full bg-gray-100 px-4 grid place-items-center">
         <div className="relative w-full bg-blue flex md:flex-row flex-col items-center">

@@ -22,7 +22,7 @@ export default function search() {
   }, [keywords]);
 
   return (
-    <div className="w-screen h-screen flex flex-col">
+    <div className="w-full h-full flex flex-col">
       <Header showLogo />
       <div className="flex-1 bg-gray-100 flex flex-col overflow-scroll">
         <div>

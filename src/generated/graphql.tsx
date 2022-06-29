@@ -163,6 +163,7 @@ export type Query = {
   deckSearch?: Maybe<Array<Deck>>;
   discover?: Maybe<Array<Deck>>;
   me?: Maybe<User>;
+  getStats?: Maybe<StatsResponse>;
   getCardFromSession?: Maybe<Card>;
 };
 
@@ -191,6 +192,18 @@ export type Session = {
   deck: Deck;
   cards: Array<Card>;
   cardsNumber: Scalars['Float'];
+};
+
+export type StatsResponse = {
+  __typename?: 'StatsResponse';
+  overallCards: Scalars['Float'];
+  learnedCards: Scalars['Float'];
+  createdDecks: Scalars['Float'];
+  studentsInCreatedDecks: Scalars['Float'];
+  overallLearnedPercent: Scalars['Float'];
+  learnedPercent: Scalars['Float'];
+  createdDecksArray: Array<Deck>;
+  learningDecksArray: Array<Deck>;
 };
 
 export type User = {
@@ -327,6 +340,11 @@ export type GetCardFromSessionQueryVariables = Exact<{
 
 
 export type GetCardFromSessionQuery = { __typename?: 'Query', getCardFromSession?: Maybe<{ __typename?: 'Card', question: string, answer: string, stats: Array<{ __typename?: 'CardStats', lastPerformanceRating: number }> }> };
+
+export type GetStatsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetStatsQuery = { __typename?: 'Query', getStats?: Maybe<{ __typename?: 'StatsResponse', overallCards: number, learnedCards: number, createdDecks: number, studentsInCreatedDecks: number, overallLearnedPercent: number, learnedPercent: number, createdDecksArray: Array<{ __typename?: 'Deck', id: number, title: string, description: string, creator: { __typename?: 'User', username: string }, cards: Array<{ __typename?: 'Card', id: number }>, learners: Array<{ __typename?: 'User', id: number }> }>, learningDecksArray: Array<{ __typename?: 'Deck', id: number, title: string, description: string, creator: { __typename?: 'User', username: string }, cards: Array<{ __typename?: 'Card', id: number }>, learners: Array<{ __typename?: 'User', id: number }> }> }> };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -583,6 +601,50 @@ export const GetCardFromSessionDocument = gql`
 
 export function useGetCardFromSessionQuery(options: Omit<Urql.UseQueryArgs<GetCardFromSessionQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<GetCardFromSessionQuery>({ query: GetCardFromSessionDocument, ...options });
+};
+export const GetStatsDocument = gql`
+    query GetStats {
+  getStats {
+    overallCards
+    learnedCards
+    createdDecks
+    studentsInCreatedDecks
+    overallLearnedPercent
+    learnedPercent
+    createdDecksArray {
+      id
+      title
+      description
+      creator {
+        username
+      }
+      cards {
+        id
+      }
+      learners {
+        id
+      }
+    }
+    learningDecksArray {
+      id
+      title
+      description
+      creator {
+        username
+      }
+      cards {
+        id
+      }
+      learners {
+        id
+      }
+    }
+  }
+}
+    `;
+
+export function useGetStatsQuery(options: Omit<Urql.UseQueryArgs<GetStatsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetStatsQuery>({ query: GetStatsDocument, ...options });
 };
 export const MeDocument = gql`
     query Me {

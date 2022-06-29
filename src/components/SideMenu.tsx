@@ -18,9 +18,9 @@ interface SideMenuProps {
 }
 
 const SideMenu: React.FC<SideMenuProps> = ({ deckId }) => {
-  const [{ data: me }] = useMeQuery();
-
-  const [{ data }] = useDecksPreviewQuery();
+  const [{ data }] = useDecksPreviewQuery({
+    requestPolicy: "network-only",
+  });
   const { menuOpen, toggleMenu } = useContext(ResponsiveSideMenuContext);
 
   const [edit, setEdit] = useState(false);
@@ -65,7 +65,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ deckId }) => {
             }
           : { transform: "translateX(0)" }
       }
-      className="absolute md:relative max-w-xs w-full h-screen bg-gray-100 flex flex-col text-gray-600 text-xl translate-x-full"
+      className="absolute md:relative max-w-xs w-full h-full bg-gray-100 flex flex-col text-gray-600 text-xl translate-x-full"
     >
       <header className="flex justify-between items-center p-4 pb-0">
         <div className="flex flex-row w-full items-center">
