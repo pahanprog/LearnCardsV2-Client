@@ -19,6 +19,7 @@ import CardEdit from "./CardEdit";
 import { userInfo } from "os";
 import { SessionContext } from "../context/SessionProvider";
 import { useRouter } from "next/router";
+import { DeckOptionsButton } from "./DeckOptionsButton";
 
 interface DeckProps {
   id: number;
@@ -163,7 +164,7 @@ const Deck: React.FC<DeckProps> = ({ id }) => {
               <div className="flex justify-start">
                 <div className="flex">
                   <div
-                    title="Learn"
+                    title="Повторить"
                     className="w-8 h-8 bg-gray-300 grid place-items-center rounded-full cursor-pointer"
                     onClick={async () => {
                       const result = await learn({ deckId: id });
@@ -188,16 +189,16 @@ const Deck: React.FC<DeckProps> = ({ id }) => {
                     <FontAwesomeIcon icon={faPlay} />
                   </div>
                   <div
-                    title="Share"
+                    title="Поделиться"
                     className="w-8 h-8 bg-gray-300 grid place-items-center rounded-full cursor-pointer ml-3"
                   >
                     <FontAwesomeIcon icon={faShareAlt} />
                   </div>
                   <div
-                    title="Options"
+                    title="Настройки"
                     className="w-8 h-8 bg-gray-300 grid place-items-center rounded-full cursor-pointer ml-3"
                   >
-                    <FontAwesomeIcon icon={faEllipsisH} />
+                    <DeckOptionsButton id={id} learning={!data.deck.canEdit} />
                   </div>
                 </div>
               </div>

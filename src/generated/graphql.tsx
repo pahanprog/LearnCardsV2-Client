@@ -339,7 +339,7 @@ export type GetCardFromSessionQueryVariables = Exact<{
 }>;
 
 
-export type GetCardFromSessionQuery = { __typename?: 'Query', getCardFromSession?: Maybe<{ __typename?: 'Card', question: string, answer: string, stats: Array<{ __typename?: 'CardStats', lastPerformanceRating: number }> }> };
+export type GetCardFromSessionQuery = { __typename?: 'Query', getCardFromSession?: Maybe<{ __typename?: 'Card', question: string, answer: string }> };
 
 export type GetStatsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -349,7 +349,7 @@ export type GetStatsQuery = { __typename?: 'Query', getStats?: Maybe<{ __typenam
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: Maybe<{ __typename?: 'User', id: number, createdAt: string, updatedAt: string, username: string }> };
+export type MeQuery = { __typename?: 'Query', me?: Maybe<{ __typename?: 'User', id: number, createdAt: string, updatedAt: string, username: string, email: string }> };
 
 
 export const CalculateStatsDocument = gql`
@@ -592,9 +592,6 @@ export const GetCardFromSessionDocument = gql`
   getCardFromSession(sessionId: $sessionId, cardId: $cardId) {
     question
     answer
-    stats {
-      lastPerformanceRating
-    }
   }
 }
     `;
@@ -653,6 +650,7 @@ export const MeDocument = gql`
     createdAt
     updatedAt
     username
+    email
   }
 }
     `;

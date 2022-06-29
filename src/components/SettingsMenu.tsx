@@ -41,7 +41,12 @@ const SettingsMenu = () => {
         <Menu.Items className="py-2 absolute right-0 top-10 w-56 origin-top-righti bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div className="grid place-items-center">
             <Menu.Item>
-              <button className="text:xl px-2 py-2 w-full hover:bg-gray-100">
+              <button
+                className="text:xl px-2 py-2 w-full hover:bg-gray-100"
+                onClick={() => {
+                  router.push("/profile");
+                }}
+              >
                 Профиль
               </button>
             </Menu.Item>

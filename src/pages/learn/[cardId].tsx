@@ -18,9 +18,11 @@ const Learn: NextPage<{ cardId: string }> = ({ cardId }: any) => {
 
   const { height, width } = useWindowDimensions();
 
-  if (sessionId === 0) {
-    router.replace("/dashboard");
-  }
+  useEffect(() => {
+    if (sessionId === 0) {
+      router.replace("/dashboard");
+    }
+  }, []);
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center relative overflow-hidden bg-gray-100 overflow-scroll">

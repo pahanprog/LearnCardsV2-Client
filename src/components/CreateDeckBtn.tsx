@@ -90,7 +90,7 @@ export default function CreateDeckBtn() {
               <Dialog.Overlay className="fixed inset-0 bg-gray-400 bg-opacity-30" />
             </Transition.Child>
             <span
-              className="inline-block h-full align-middle"
+              className="inline-block h-screen align-middle"
               aria-hidden="true"
             >
               &#8203;

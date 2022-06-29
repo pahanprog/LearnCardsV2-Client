@@ -4,5 +4,6 @@ query Me {
     createdAt
     updatedAt
     username
+    email
   }
 }

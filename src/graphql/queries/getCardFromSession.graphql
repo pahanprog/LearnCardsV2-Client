@@ -2,8 +2,5 @@ query GetCardFromSession($sessionId: Float!, $cardId: Float!) {
   getCardFromSession(sessionId: $sessionId, cardId: $cardId) {
     question
     answer
-    stats {
-      lastPerformanceRating
-    }
   }
 }
