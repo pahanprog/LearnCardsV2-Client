@@ -45,7 +45,6 @@ const Learn: NextPage<{ cardId: string }> = ({ cardId }: any) => {
               backfaceVisibility: "hidden",
               transform: "rotateY(0)",
               WebkitTransform: "rotateY(0)",
-              WebkitBackfaceVisibility: "visible",
             }}
             className="w-full h-full absolute top-0 left-0"
           >
@@ -58,10 +57,9 @@ const Learn: NextPage<{ cardId: string }> = ({ cardId }: any) => {
           </div>
           <div
             style={{
-              backfaceVisibility: "hidden",
+              backfaceVisibility: "visible",
               transform: "rotateY(180deg)",
               WebkitTransform: "rotateY(180deg)",
-              WebkitBackfaceVisibility: "visible",
             }}
             className="w-full h-full absolute top-0 left-0"
           >
