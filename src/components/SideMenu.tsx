@@ -6,13 +6,11 @@ import DashboardLink from "./DashboardLink";
 import { SideDeck } from "./SideDeck";
 import { useRouter } from "next/router";
 import { DeckPreview } from "../types";
-import { DeckPreviewContext } from "../pages/dashboard";
 import { Button } from "./Button";
 import useWindowDimensions from "../hooks/useWindowDimensions";
 import { ResponsiveSideMenuContext } from "../context/ResponsiveSideMenuProvider";
 
 interface SideMenuProps {
-  decks: DeckPreview[];
   deckId: number;
   hidden?: boolean;
 }
@@ -27,12 +25,9 @@ const SideMenu: React.FC<SideMenuProps> = ({ deckId }) => {
 
   const router = useRouter();
 
-  const { decks, setDecks } = React.useContext(DeckPreviewContext);
-
   useEffect(() => {
     console.log("DATA CHANGED ", data);
     if (data?.decks?.length != 0 && data?.decks) {
-      setDecks(data.decks);
       if (data.decks[0] && data.decks[0].id) {
         router.replace(`/dashboard?deck=${data.decks[0].id}`, undefined, {
           shallow: true,
@@ -42,7 +37,6 @@ const SideMenu: React.FC<SideMenuProps> = ({ deckId }) => {
       }
     } else if (data?.decks?.length === 0) {
       router.replace(`/dashboard`, undefined, { shallow: true });
-      setDecks([]);
     }
   }, [data]);
 
@@ -112,8 +106,8 @@ const SideMenu: React.FC<SideMenuProps> = ({ deckId }) => {
         </div>
       </div>
       <div className="w-full overflow-auto">
-        {decks
-          ? decks.map((deck) => {
+        {data?.decks
+          ? data?.decks.map((deck) => {
               if (deck !== null) {
                 return (
                   <SideDeck

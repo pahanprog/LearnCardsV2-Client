@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import result from "postcss/lib/result";
 import React, { Fragment, useState } from "react";
 import { useCreateDeckMutation } from "../generated/graphql";
-import { DeckPreviewContext } from "../pages/dashboard";
 import * as yup from "yup";
 import { TextInput } from "./TextInput";
 import { Button } from "./Button";
@@ -26,7 +25,6 @@ export default function CreateDeckBtn() {
   const [{ data }, create] = useCreateDeckMutation();
 
   const router = useRouter();
-  const { decks, setDecks } = React.useContext(DeckPreviewContext);
   const { toggleMenu } = React.useContext(ResponsiveSideMenuContext);
 
   const [loading, setLoading] = useState(false);

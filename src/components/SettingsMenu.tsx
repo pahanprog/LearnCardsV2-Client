@@ -1,14 +1,16 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCog } from "@fortawesome/free-solid-svg-icons";
 import { useLogoutMutation } from "../generated/graphql";
 import { useRouter } from "next/router";
 import useWindowDimensions from "../hooks/useWindowDimensions";
+import { UrqlClientContext } from "../context/UrqlClientProvider";
 
 const SettingsMenu = () => {
   const [{ data }, logout] = useLogoutMutation();
   const router = useRouter();
+  const { resetClient } = useContext(UrqlClientContext);
 
   const handleLogout = async () => {
     const res = await logout();
@@ -16,7 +18,8 @@ const SettingsMenu = () => {
       if (typeof window !== "undefined") {
         localStorage.removeItem("user");
       }
-      router.push("/login");
+      resetClient();
+      window.location.href = "/";
     }
   };
 

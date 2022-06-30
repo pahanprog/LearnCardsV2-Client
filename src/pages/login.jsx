@@ -63,10 +63,8 @@ export default function login() {
         JSON.stringify({ token: result.data.token })
       );
     }
-    
-    setTimeout(() => {
+
       router.push(`/dashboard`, "", {});
-    }, 500);
   };
 
   return (
