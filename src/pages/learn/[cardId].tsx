@@ -41,7 +41,12 @@ const Learn: NextPage<{ cardId: string }> = ({ cardId }: any) => {
           className="relative w-full h-full bg-white border shadow-md rounded-xl grid place-items-center p-4"
         >
           <div
-            style={{ backfaceVisibility: "hidden", transform: "rotateY(0)" }}
+            style={{
+              backfaceVisibility: "hidden",
+              transform: "rotateY(0)",
+              WebkitTransform: "rotateY(0)",
+              WebkitBackfaceVisibility: "visible",
+            }}
             className="w-full h-full absolute top-0 left-0"
           >
             <div className="w-full h-full relative grid place-items-center">
@@ -55,6 +60,8 @@ const Learn: NextPage<{ cardId: string }> = ({ cardId }: any) => {
             style={{
               backfaceVisibility: "hidden",
               transform: "rotateY(180deg)",
+              WebkitTransform: "rotateY(180deg)",
+              WebkitBackfaceVisibility: "visible",
             }}
             className="w-full h-full absolute top-0 left-0"
           >
